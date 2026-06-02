@@ -60,14 +60,25 @@ Rules:
 - Gmail link format: `https://mail.google.com/mail/u/0/#inbox/{threadId}`
 - Slack link: use the permalink from the search result
 
-## Step 5 — Print a summary
+## Step 5 — Commit and push (triggers Vercel redeploy)
 
-After writing the JSON, print a short summary:
+After writing the JSON, commit and push it so the hosted Vercel app updates:
+
+```bash
+git add data/brief.json
+git commit -m "Brief for {date}"
+git push
+```
+
+Vercel auto-deploys on push; the live page reflects the new brief in ~30s.
+
+## Step 6 — Print a summary
 
 ```
-✓ Brief written to data/brief.json
+✓ Brief filed for {date}
   {N} urgent · {M} actions · {K} FYIs
-  Open http://localhost:3000 to view
+  Pushed — live in ~30s at {your-vercel-url}
+  Or locally: http://localhost:3000
 ```
 
 ## Notes
