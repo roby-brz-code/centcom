@@ -1,0 +1,214 @@
+{
+  "date": "Tuesday 2 Jun",
+  "generatedAt": "2026-06-02T13:00:00Z",
+  "actions": [
+    {
+      "id": 1,
+      "source": "slack",
+      "sender": "Nic Tan",
+      "subject": "HIGGS Settlement Gap",
+      "preview": "HIGGS is saying their total settlement seen on dashboard is $14,359.21 but only received $14,162.45 — gap of $196.76.",
+      "summary": "HIGGS reporting a $196.76 discrepancy between dashboard and actual received amount, across all 3 of their games (Words, Klondike, Gearpaw). Started since the merge restyle launched a few days ago.",
+      "draft": "Hey Nic, looking into this now. Will come back to you shortly with what's causing the gap.",
+      "link": "https://breezecash.slack.com/archives/D0A267YMSQK/p1780399830001429",
+      "time": "7:30am",
+      "urgent": true
+    },
+    {
+      "id": 2,
+      "source": "slack",
+      "sender": "Jasmine Tan",
+      "subject": "Merchant Can't Locate Payment",
+      "preview": "Hey Roby, it seems like they can't locate the payment still.",
+      "summary": "Merchant still can't find a payment. Jasmine shared the screenshot you provided but they're saying they've yet to receive it. Asking for additional supporting documentation — and notes she has no dedicated contact to escalate to.",
+      "draft": "Hey Jasmine, no worries. Can you share the transaction ID and the merchant's bank name? I'll pull the wire details from our end so we have a full payment trail to send them.",
+      "link": "https://breezecash.slack.com/archives/D08PCBZ19HS/p1780383491779519",
+      "time": "2:58am",
+      "urgent": true
+    },
+    {
+      "id": 3,
+      "source": "email",
+      "sender": "Dwiti Chopra (Singer Lewak)",
+      "subject": "Audit Confirmation Letters Overdue",
+      "preview": "Could you please provide the confirmations printed on your letterhead and signed by you at your earliest convenience?",
+      "summary": "Auditors sent confirmation letter drafts on May 27 for SVB, APT Pay, Mercury, and Brex. Now chasing for signed copies on letterhead. Waiting 6 days with no reply.",
+      "draft": "Hi Dwiti, apologies for the delay — I'll get these signed and back to you today.\n\nRob",
+      "link": "https://mail.google.com/mail/u/0/#inbox/19e6b5051f2c0dfa",
+      "time": "12:10am",
+      "urgent": true,
+      "overduedays": 6
+    },
+    {
+      "id": 4,
+      "source": "email",
+      "sender": "Alain",
+      "subject": "Worldpay SOC Reports — Auditor Sign-off Needed",
+      "preview": "Great, thanks Victor. @Robert Fok Does this satisfy the auditors' request?",
+      "summary": "Victor at Worldpay sent SOC reports (NAP RoW platform + VAP North America). Alain forwarded asking whether these satisfy the auditors' request.",
+      "draft": "Hi Alain, yes these should cover it — I'll confirm with the auditors and let you know if they need anything additional.\n\nRob",
+      "link": "https://mail.google.com/mail/u/0/#inbox/19e85abeb3bc8fe3",
+      "time": "9:29am",
+      "urgent": true
+    },
+    {
+      "id": 5,
+      "source": "email",
+      "sender": "Numeral",
+      "subject": "⚠️ Incorrect State Tax Portal Credentials",
+      "preview": "To avoid late filings Numeral requires working login credentials for: Idaho, Minnesota, Kentucky, Alabama, New Jersey.",
+      "summary": "Numeral can't file taxes for 5 states due to incorrect portal credentials. Risk of late filings if not resolved today.",
+      "draft": "Hi, apologies for this — I'll update the credentials for the affected states today and confirm once done.\n\nRob",
+      "link": "https://mail.google.com/mail/u/0/#inbox/19e834576ca52fc1",
+      "time": "1:00pm",
+      "urgent": true
+    },
+    {
+      "id": 6,
+      "source": "email",
+      "sender": "South Dakota Dept. of Revenue",
+      "subject": "Delinquent Tax Return Notice",
+      "preview": "According to the Department's records, your first tax return for license #1043-4891-ST is delinquent.",
+      "summary": "Official delinquency notice for Breeze Labs Inc from SD DoR. Sent to Millie, cc'd you. License #1043-4891-ST.",
+      "draft": "Hey Millie, flagging this — did you see the SD delinquent return notice? Let's connect with Numeral/PP&Co to get this resolved.\n\nRoby",
+      "link": "https://mail.google.com/mail/u/0/#inbox/19e83824a3d82de7",
+      "time": "2:07pm",
+      "urgent": true
+    },
+    {
+      "id": 7,
+      "source": "email",
+      "sender": "Gabe Stroup (CGS / Spintime)",
+      "subject": "Settlement Account Follow-Up",
+      "preview": "Just checking here to see if the settlement account has made any progress? Also need to do an initial top up of our escrow account for payouts.",
+      "summary": "Gabe submitted the settlement form on May 29 as requested and is now following up (4 days later). Also needs to arrange an escrow top-up per Tim's instructions.",
+      "draft": "Hi Gabe, the settlement account is being set up now — I'll have details across to you shortly. On the escrow top-up, please send funds to [account details] with \"Spintime\" as the reference.\n\nRob",
+      "link": "https://mail.google.com/mail/u/0/#inbox/19e7414aafa7591a",
+      "time": "4:11pm",
+      "urgent": false,
+      "overduedays": 4
+    },
+    {
+      "id": 8,
+      "source": "email",
+      "sender": "Yuliy German / Jack Zhang (Blazesoft)",
+      "subject": "Payout Funding Setup Question",
+      "preview": "Since we are using only the payouts option, how does funding work? It's not really a 'settlement' process.",
+      "summary": "Yuliy replied with their Group VP Finance Jack Zhang added. Asking how the escrow funding model works for a payout-only setup.",
+      "draft": "Hi Yuliy and Jack, for the payout-only setup, you'll fund a merchant escrow account on our side, and we draw from that to fulfil payouts. Please send the initial top-up to [account details] with \"Blazesoft\" as the reference. Happy to jump on a call if helpful.\n\nRob",
+      "link": "https://mail.google.com/mail/u/0/#inbox/19e83c85fd3a2160",
+      "time": "4:01pm",
+      "urgent": false
+    },
+    {
+      "id": 9,
+      "source": "email",
+      "sender": "Kevin Kong (PP&Co)",
+      "subject": "Call Scheduling — Jun 1 or Jun 2?",
+      "preview": "Sorry your email came in 2:50AM PST — not sure if you meant 6/1 or 6/2 at 5PM EST.",
+      "summary": "Kevin sent the same message twice asking for clarification on the call date. Still waiting for a response.",
+      "draft": "Hi Kevin, apologies for the confusion — let's do today Jun 2 at 5pm EST. Does that still work for you?\n\nRob",
+      "link": "https://mail.google.com/mail/u/0/#inbox/19e83f358a3248be",
+      "time": "4:10pm",
+      "urgent": false
+    },
+    {
+      "id": 10,
+      "source": "email",
+      "sender": "Jie Zhu (PP&Co)",
+      "subject": "Delaware Franchise Tax — Both Entities?",
+      "preview": "Hi Rob, does both Breeze Labs and Breeze Labs Payments need help with Delaware Annual Franchise Tax Report?",
+      "summary": "Jie asking whether both entities need DE filing help. Related thread confirmed Yiyi Wu at PP&Co can assist.",
+      "draft": "Hi Jie, yes — both entities need help with the DE filing. Happy to connect with Yiyi directly to get this moving. What information do you need from our side to kick things off?\n\nRob",
+      "link": "https://mail.google.com/mail/u/0/#inbox/19e8435ce92aad97",
+      "time": "5:22pm",
+      "urgent": false
+    },
+    {
+      "id": 11,
+      "source": "email",
+      "sender": "Burkland Associates",
+      "subject": "Invoice $2,310 Due — Tax Services",
+      "preview": "Your invoice is ready! Balance due $2,310.00.",
+      "summary": "QuickBooks invoice from Burkland for tax services. $2,310 balance due.",
+      "draft": "Hi, paying this now — will confirm once processed.\n\nRob",
+      "link": "https://mail.google.com/mail/u/0/#inbox/19e85e14306b82cd",
+      "time": "1:10am",
+      "urgent": false
+    },
+    {
+      "id": 12,
+      "source": "email",
+      "sender": "Mercury (via Millie)",
+      "subject": "New Relationship Manager Intro",
+      "preview": "I'm adding our Head of Partnerships Alain here, as well as our Finance Operations Manager Roby.",
+      "summary": "Shadman (Mercury RM) is departing. Millie introduced Alain and Roby to new contacts Will and K. Jacobi at Mercury.",
+      "draft": "Thanks Millie — appreciated. Looking forward to working with the team going forward.\n\nRob",
+      "link": "https://mail.google.com/mail/u/0/#inbox/19e84db74f72a475",
+      "time": "8:24pm",
+      "urgent": false
+    },
+    {
+      "id": 13,
+      "source": "slack",
+      "sender": "Meredith Grife",
+      "subject": "Deck / Monthly Metrics",
+      "preview": "Roby do you have the monthly metrics? We can use that instead of having 2 diff slides.",
+      "summary": "Millie and Meredith building a slide deck. Millie asked if you have monthly metrics to consolidate slides. Meredith shared an updated slide and is asking if you can open/access it.",
+      "draft": "Hey Meredith, just opened it — looks good. Millie, I can send across the monthly metrics now if still useful?",
+      "link": "https://breezecash.slack.com/archives/C0B7L5M0ELQ/p1780404717773839?thread_ts=1780352799.694109&cid=C0B7L5M0ELQ",
+      "time": "8:44am",
+      "urgent": false
+    }
+  ],
+  "fyis": [
+    {
+      "sender": "Greenhouse",
+      "summary": "Interview reminder: Bjorn Halvorson today @ 6pm BST — Head of Finance Domain Screen",
+      "time": "6:01am",
+      "source": "email"
+    },
+    {
+      "sender": "allstaff@breeze.cash",
+      "summary": "Team member leaving Friday Jun 5 — farewell email to all staff",
+      "time": "4:41am",
+      "source": "email"
+    },
+    {
+      "sender": "Ramp",
+      "summary": "35 transactions with missing receipts/items ($178.22 at DoorDash flagged)",
+      "time": "10:38am",
+      "source": "email"
+    },
+    {
+      "sender": "SVB",
+      "summary": "5 account statements ready to download + 5 payments processed this morning",
+      "time": "7:24–9:33am",
+      "source": "email"
+    },
+    {
+      "sender": "Nonco",
+      "summary": "$7,500,375 deposit confirmed processed at 11:52 UTC",
+      "time": "11:53am",
+      "source": "email"
+    },
+    {
+      "sender": "Brex",
+      "summary": "May statements ready (May 1–31)",
+      "time": "3:28am",
+      "source": "email"
+    },
+    {
+      "sender": "Worldpay",
+      "summary": "IC++ invoices + MI report attached",
+      "time": "6:43am",
+      "source": "email"
+    },
+    {
+      "sender": "Stephanie Dang",
+      "summary": "FYI on upcoming 401(k) withdrawal — 401k emails still routing to her personal address",
+      "time": "2:12am",
+      "source": "email"
+    }
+  ]
+}

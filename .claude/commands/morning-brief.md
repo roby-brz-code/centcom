@@ -18,43 +18,59 @@ Discard pure noise (Uber promo, WeWork newsletter, etc.).
 
 Write a short, direct draft reply Roby can use as-is or lightly edit. Match Roby's voice: brief, professional, plain. Sign off as "Rob" or "Roby" depending on context (external = Rob, internal = Roby). No fluff.
 
-## Step 4 — Output the feed
+## Step 4 — Write data/brief.json
 
-Format output exactly like this:
+Write the results to `data/brief.json` in the repo using this exact schema:
 
----
+```json
+{
+  "date": "Tuesday 2 Jun",
+  "generatedAt": "<ISO timestamp>",
+  "actions": [
+    {
+      "id": 1,
+      "source": "email" | "slack",
+      "sender": "Sender Name",
+      "subject": "Subject line or thread summary",
+      "preview": "First line of the message, verbatim",
+      "summary": "1-2 sentence summary of what they need and context",
+      "draft": "Full draft reply text, ready to send",
+      "link": "https://... (Gmail thread link or Slack permalink)",
+      "time": "9:30am",
+      "urgent": true | false,
+      "overduedays": 4
+    }
+  ],
+  "fyis": [
+    {
+      "sender": "Sender Name",
+      "summary": "One-line summary",
+      "time": "9:30am",
+      "source": "email" | "slack"
+    }
+  ]
+}
+```
 
-# Morning Brief — {today's date, e.g. Monday 2 Jun}
-{N} actions · {M} FYIs
+Rules:
+- `urgent: true` for merchant issues, financial ops, compliance, anything time-sensitive or overdue >2 days
+- `overduedays` only if Roby hasn't replied in >3 days
+- Order actions: urgent first, then by recency within each group
+- Draft replies: plain text, no markdown. Sign off "Rob" (external) or "Roby" (internal Slack/email)
+- Gmail link format: `https://mail.google.com/mail/u/0/#inbox/{threadId}`
+- Slack link: use the permalink from the search result
 
----
+## Step 5 — Print a summary
 
-## Actions
+After writing the JSON, print a short summary:
 
-### 1. {Source icon: 📧 or 💬} {Sender name} — {Subject or thread summary}
-**{Channel/thread context}** · {time, e.g. 9:30am}
-{1-2 sentence summary of what they need}
-[→ Open]({link to Gmail thread or Slack permalink})
-
-> **Draft reply:**
-> {draft}
-
----
-
-### 2. ...
-
-(repeat for all action items, ordered by urgency — financial ops and merchant issues first, then team requests, then compliance/admin)
-
----
-
-## FYIs
-- **{Sender}** — {one-line summary} [{time}]
-- ...
-
----
+```
+✓ Brief written to data/brief.json
+  {N} urgent · {M} actions · {K} FYIs
+  Open http://localhost:3000 to view
+```
 
 ## Notes
 - If an item is ambiguous (action vs FYI), include it as an action
 - For Slack threads with multiple messages, summarise the whole thread, not just the last message
 - For email threads that span multiple days, note if it's been waiting >3 days with no reply from Roby
-- Flag any items that are overdue or time-sensitive with ⚠️
