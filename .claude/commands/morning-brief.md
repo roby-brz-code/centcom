@@ -38,7 +38,15 @@ Write the results to `data/brief.json` in the repo using this exact schema:
       "link": "https://... (Gmail thread link or Slack permalink)",
       "time": "9:30am",
       "urgent": true | false,
-      "overduedays": 4
+      "overduedays": 4,
+      "reply": {
+        "to": "sender@example.com (email only)",
+        "emailSubject": "Original subject (email only)",
+        "threadId": "Gmail thread id (email only)",
+        "messageId": "<RFC822 Message-ID of original> (email only)",
+        "channel": "Slack channel/DM id e.g. D08PCBZ19HS (slack only)",
+        "threadTs": "Slack parent ts e.g. 1780352799.694109 (slack only)"
+      }
     }
   ],
   "fyis": [
@@ -59,6 +67,10 @@ Rules:
 - Draft replies: plain text, no markdown. Sign off "Rob" (external) or "Roby" (internal Slack/email)
 - Gmail link format: `https://mail.google.com/mail/u/0/#inbox/{threadId}`
 - Slack link: use the permalink from the search result
+- `reply` powers the Send button on the hosted page. Capture it from the source message:
+  - Email: `to` = sender's address, `emailSubject` = original subject, `threadId` = Gmail thread id, `messageId` = the original message's RFC822 `Message-ID` header (use `get_thread` to read it)
+  - Slack: `channel` = the channel/DM id, `threadTs` = the parent message `ts` (omit if it's a top-level DM with no thread)
+  - Omit `reply` entirely if you can't determine a safe target — the Send button will disable itself
 
 ## Step 5 — Commit and push (triggers Vercel redeploy)
 

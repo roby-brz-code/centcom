@@ -12,7 +12,8 @@
       "draft": "Hey Nic, looking into this now. Will come back to you shortly with what's causing the gap.",
       "link": "https://breezecash.slack.com/archives/D0A267YMSQK/p1780399830001429",
       "time": "7:30am",
-      "urgent": true
+      "urgent": true,
+      "reply": { "channel": "D0A267YMSQK" }
     },
     {
       "id": 2,
@@ -24,7 +25,8 @@
       "draft": "Hey Jasmine, no worries. Can you share the transaction ID and the merchant's bank name? I'll pull the wire details from our end so we have a full payment trail to send them.",
       "link": "https://breezecash.slack.com/archives/D08PCBZ19HS/p1780383491779519",
       "time": "2:58am",
-      "urgent": true
+      "urgent": true,
+      "reply": { "channel": "D08PCBZ19HS" }
     },
     {
       "id": 3,
@@ -158,7 +160,8 @@
       "draft": "Hey Meredith, just opened it — looks good. Millie, I can send across the monthly metrics now if still useful?",
       "link": "https://breezecash.slack.com/archives/C0B7L5M0ELQ/p1780404717773839?thread_ts=1780352799.694109&cid=C0B7L5M0ELQ",
       "time": "8:44am",
-      "urgent": false
+      "urgent": false,
+      "reply": { "channel": "C0B7L5M0ELQ", "threadTs": "1780352799.694109" }
     }
   ],
   "fyis": [
