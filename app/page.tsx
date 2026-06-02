@@ -1,95 +1,106 @@
 import { Brief } from "@/types/brief"
 import briefData from "@/data/brief.json"
+import ActionCard from "./components/ActionCard"
 
 export const dynamic = "force-dynamic"
-import ActionCard from "./components/ActionCard"
+
+function SectionHead({ title, count }: { title: string; count: number }) {
+  return (
+    <div className="flex items-baseline gap-3 mb-1 mt-10">
+      <h2 className="label text-ink">{title}</h2>
+      <span className="label text-ink-faint tabular-nums">{count}</span>
+      <span className="flex-1 border-t border-rule" />
+    </div>
+  )
+}
 
 export default function Home() {
   const brief = briefData as Brief
-  const urgent = brief.actions.filter(a => a.urgent)
-  const normal = brief.actions.filter(a => !a.urgent)
+  const urgent = brief.actions.filter((a) => a.urgent)
+  const normal = brief.actions.filter((a) => !a.urgent)
+
+  const genTime = new Date(brief.generatedAt).toLocaleTimeString("en-GB", {
+    hour: "2-digit",
+    minute: "2-digit",
+  })
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Top bar */}
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-10">
-        <div className="max-w-2xl mx-auto px-6 py-4 flex items-center justify-between">
-          <div>
-            <h1 className="text-base font-semibold text-gray-900">Morning Brief</h1>
-            <p className="text-xs text-gray-500">{brief.date}</p>
+    <div className="min-h-screen">
+      <div className="max-w-[42rem] mx-auto px-6 sm:px-10">
+        {/* Masthead */}
+        <header className="pt-14 pb-2">
+          <div className="flex items-baseline justify-between mb-3">
+            <span className="label text-ink-soft">{brief.date}</span>
+            <span className="label text-ink-faint">Email · Slack</span>
           </div>
-          <div className="flex items-center gap-3 text-xs text-gray-500">
-            <span className="inline-flex items-center gap-1">
-              <span className="w-1.5 h-1.5 rounded-full bg-red-400 inline-block" />
-              {urgent.length} urgent
+          <h1
+            className="font-display text-ink leading-[0.95] tracking-tight"
+            style={{ fontWeight: 600, fontSize: "clamp(2.5rem, 8vw, 4rem)" }}
+          >
+            The Morning Brief
+          </h1>
+          {/* Newspaper double rule */}
+          <div className="mt-5 border-t-2 border-ink" />
+          <div className="mt-1 border-t border-ink" />
+          <div className="flex items-center justify-between py-2.5">
+            <span className="label text-ink-soft">
+              {urgent.length} urgent · {brief.actions.length} to action · {brief.fyis.length} noted
             </span>
-            <span className="text-gray-300">·</span>
-            <span>{brief.actions.length} actions</span>
-            <span className="text-gray-300">·</span>
-            <span>{brief.fyis.length} FYIs</span>
+            <span className="label text-ink-faint">Filed {genTime}</span>
           </div>
-        </div>
-      </header>
+          <div className="border-t border-ink" />
+        </header>
 
-      <main className="max-w-2xl mx-auto px-6 py-8 space-y-8">
+        <main className="pb-20">
+          {urgent.length > 0 && (
+            <section>
+              <SectionHead title="Needs you first" count={urgent.length} />
+              <div>
+                {urgent.map((item, i) => (
+                  <ActionCard key={item.id} item={item} index={i} />
+                ))}
+              </div>
+            </section>
+          )}
 
-        {/* Urgent */}
-        {urgent.length > 0 && (
-          <section>
-            <div className="flex items-center gap-2 mb-3">
-              <span className="text-xs font-semibold text-red-500 uppercase tracking-wide">Urgent</span>
-              <div className="flex-1 h-px bg-red-100" />
-            </div>
-            <div className="space-y-2">
-              {urgent.map((item, i) => (
-                <ActionCard key={item.id} item={item} index={i} />
-              ))}
-            </div>
-          </section>
-        )}
+          {normal.length > 0 && (
+            <section>
+              <SectionHead title="To action" count={normal.length} />
+              <div>
+                {normal.map((item, i) => (
+                  <ActionCard key={item.id} item={item} index={i} />
+                ))}
+              </div>
+            </section>
+          )}
 
-        {/* Actions */}
-        {normal.length > 0 && (
-          <section>
-            <div className="flex items-center gap-2 mb-3">
-              <span className="text-xs font-semibold text-gray-400 uppercase tracking-wide">Actions</span>
-              <div className="flex-1 h-px bg-gray-200" />
-            </div>
-            <div className="space-y-2">
-              {normal.map((item, i) => (
-                <ActionCard key={item.id} item={item} index={i} />
-              ))}
-            </div>
-          </section>
-        )}
+          {brief.fyis.length > 0 && (
+            <section>
+              <SectionHead title="Noted, no reply needed" count={brief.fyis.length} />
+              <ul>
+                {brief.fyis.map((fyi, i) => (
+                  <li
+                    key={i}
+                    className="flex items-baseline gap-4 py-2.5 border-b border-rule-soft"
+                  >
+                    <span className="font-display text-ink text-[0.95rem] flex-shrink-0" style={{ fontWeight: 540 }}>
+                      {fyi.sender}
+                    </span>
+                    <span className="font-body italic text-ink-soft text-[0.98rem] leading-snug flex-1">
+                      {fyi.summary}
+                    </span>
+                    <span className="label text-ink-faint flex-shrink-0 tabular-nums">{fyi.time}</span>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
 
-        {/* FYIs */}
-        {brief.fyis.length > 0 && (
-          <section>
-            <div className="flex items-center gap-2 mb-3">
-              <span className="text-xs font-semibold text-gray-400 uppercase tracking-wide">FYIs</span>
-              <div className="flex-1 h-px bg-gray-200" />
-            </div>
-            <div className="bg-white rounded-xl border border-gray-200 divide-y divide-gray-100">
-              {brief.fyis.map((fyi, i) => (
-                <div key={i} className="px-5 py-3 flex items-start gap-3">
-                  <div className="flex-1 min-w-0">
-                    <span className="text-sm font-medium text-gray-700">{fyi.sender}</span>
-                    <span className="text-gray-300 mx-1.5 text-sm">—</span>
-                    <span className="text-sm text-gray-500">{fyi.summary}</span>
-                  </div>
-                  <span className="text-xs text-gray-400 flex-shrink-0 mt-0.5">{fyi.time}</span>
-                </div>
-              ))}
-            </div>
-          </section>
-        )}
-
-        <p className="text-center text-xs text-gray-400 pb-4">
-          Generated at {new Date(brief.generatedAt).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })}
-          {" · "}Run <code className="bg-gray-100 px-1 rounded">/morning-brief</code> to refresh
-        </p>
-      </main>
+          <p className="label text-ink-faint text-center mt-14 leading-relaxed">
+            Run <span className="text-ink">/morning-brief</span> to refile
+          </p>
+        </main>
+      </div>
     </div>
   )
 }
