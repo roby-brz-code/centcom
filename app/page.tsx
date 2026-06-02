@@ -1,5 +1,7 @@
 import { Brief } from "@/types/brief"
 import briefData from "@/data/brief.json"
+
+export const dynamic = "force-dynamic"
 import ActionCard from "./components/ActionCard"
 
 export default function Home() {
