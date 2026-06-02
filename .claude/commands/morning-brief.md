@@ -39,14 +39,7 @@ Write the results to `data/brief.json` in the repo using this exact schema:
       "time": "9:30am",
       "urgent": true | false,
       "overduedays": 4,
-      "reply": {
-        "to": "sender@example.com (email only)",
-        "emailSubject": "Original subject (email only)",
-        "threadId": "Gmail thread id (email only)",
-        "messageId": "<RFC822 Message-ID of original> (email only)",
-        "channel": "Slack channel/DM id e.g. D08PCBZ19HS (slack only)",
-        "threadTs": "Slack parent ts e.g. 1780352799.694109 (slack only)"
-      }
+      "draftUrl": "link to the draft created in Gmail/Slack (added in Step 4b)"
     }
   ],
   "fyis": [
@@ -67,10 +60,18 @@ Rules:
 - Draft replies: plain text, no markdown. Sign off "Rob" (external) or "Roby" (internal Slack/email)
 - Gmail link format: `https://mail.google.com/mail/u/0/#inbox/{threadId}`
 - Slack link: use the permalink from the search result
-- `reply` powers the Send button on the hosted page. Capture it from the source message:
-  - Email: `to` = sender's address, `emailSubject` = original subject, `threadId` = Gmail thread id, `messageId` = the original message's RFC822 `Message-ID` header (use `get_thread` to read it)
-  - Slack: `channel` = the channel/DM id, `threadTs` = the parent message `ts` (omit if it's a top-level DM with no thread)
-  - Omit `reply` entirely if you can't determine a safe target — the Send button will disable itself
+
+## Step 4b — Create a draft reply for each action
+
+For every ACTION item, create the draft directly in Gmail/Slack so Roby can
+review and send it natively. Nothing is sent automatically — these are drafts only.
+
+- Email: call `create_draft` with `to` = sender's address, `subject` = `Re: <original subject>`, `body` = the draft text, and `replyToMessageId` = the original message id (so it threads correctly).
+- Slack: call `slack_send_message_draft` with `channel_id` = the channel/DM id, `message` = the draft text, and `thread_ts` = the parent ts if it's a threaded message.
+
+Record the resulting draft link in each action's `draftUrl` field (Gmail draft URL,
+or the `channel_link` Slack returns). If a draft can't be created for an item,
+leave `draftUrl` unset — the page shows a graceful fallback for that card.
 
 ## Step 5 — Commit and push (triggers Vercel redeploy)
 

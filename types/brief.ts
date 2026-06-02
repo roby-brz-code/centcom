@@ -1,18 +1,5 @@
 export type Source = "email" | "slack"
 
-// Everything the server needs to route a reply back to the original message.
-// Captured by the morning-brief skill; never trusted from the client.
-export interface ReplyTarget {
-  // Email (Gmail)
-  to?: string // recipient address
-  emailSubject?: string // original subject, so we can prefix "Re:"
-  threadId?: string // Gmail thread id, keeps the reply in-thread
-  messageId?: string // RFC822 Message-ID of the original, for In-Reply-To/References
-  // Slack
-  channel?: string // channel or DM id
-  threadTs?: string // parent ts, so the reply lands in the right thread
-}
-
 export interface ActionItem {
   id: number
   source: Source
@@ -25,7 +12,9 @@ export interface ActionItem {
   time: string
   urgent: boolean
   overduedays?: number
-  reply?: ReplyTarget
+  // Link to the ready-made draft the morning-brief skill created in
+  // Gmail / Slack. Present once a draft exists; the card links straight to it.
+  draftUrl?: string
 }
 
 export interface FYIItem {

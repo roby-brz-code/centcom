@@ -7,39 +7,11 @@ export default function ActionCard({ item, index }: { item: ActionItem; index: n
   const [expanded, setExpanded] = useState(false)
   const [copied, setCopied] = useState(false)
   const [done, setDone] = useState(false)
-  const [draft, setDraft] = useState(item.draft)
-  const [sending, setSending] = useState(false)
-  const [sent, setSent] = useState(false)
-  const [error, setError] = useState<string | null>(null)
 
   function copyDraft() {
-    navigator.clipboard.writeText(draft)
+    navigator.clipboard.writeText(item.draft)
     setCopied(true)
     setTimeout(() => setCopied(false), 2000)
-  }
-
-  async function send() {
-    setSending(true)
-    setError(null)
-    try {
-      const res = await fetch("/api/send", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id: item.id, draft }),
-      })
-      const json = (await res.json()) as { ok: boolean; error?: string }
-      if (!json.ok) {
-        setError(json.error ?? "Send failed")
-        return
-      }
-      setSent(true)
-      // Slide the card out once the reply is on its way.
-      setTimeout(() => setDone(true), 1200)
-    } catch {
-      setError("Network error — could not reach the server")
-    } finally {
-      setSending(false)
-    }
   }
 
   if (done) return null
@@ -124,43 +96,40 @@ export default function ActionCard({ item, index }: { item: ActionItem; index: n
             {item.summary}
           </p>
 
-          {/* Draft — editable, framed like a quoted reply, not a SaaS textbox */}
+          {/* Draft — framed like a quoted reply, not a SaaS textbox */}
           <div
-            className={`border-l-2 pl-4 mb-4 ${
+            className={`border-l-2 pl-4 mb-5 ${
               isSlack ? "border-slack/40" : "border-email/40"
             }`}
           >
             <div className="label text-ink-faint mb-2">
-              Reply{item.reply?.to ? ` to ${item.reply.to}` : ""}
+              Draft reply{item.draftUrl ? ` · ready in ${sourceLabel}` : ""}
             </div>
-            <textarea
-              value={draft}
-              onChange={(e) => setDraft(e.target.value)}
-              disabled={sending || sent}
-              rows={Math.max(3, draft.split("\n").length + 1)}
-              className="w-full bg-transparent font-body text-ink text-[1.05rem] leading-relaxed resize-none outline-none max-w-prose disabled:opacity-60"
-            />
+            <p className="font-body text-ink text-[1.05rem] leading-relaxed whitespace-pre-line max-w-prose">
+              {item.draft}
+            </p>
           </div>
 
-          {error && (
-            <p className="label text-accent mb-3">{error}</p>
-          )}
-
-          {/* Actions */}
+          {/* Actions — open the ready-made draft, or fall back to the thread */}
           <div className="flex items-center gap-5">
-            <button
-              onClick={send}
-              disabled={sending || sent || draft.trim().length === 0}
-              className={`label px-3 py-1.5 rounded-sm transition-colors disabled:opacity-50 ${
-                sent
-                  ? "bg-email/15 text-email"
-                  : isSlack
-                  ? "bg-slack text-paper-raised hover:bg-slack/90"
-                  : "bg-email text-paper-raised hover:bg-email/90"
-              }`}
-            >
-              {sent ? "Sent ✓" : sending ? "Sending…" : `Send via ${sourceLabel}`}
-            </button>
+            {item.draftUrl ? (
+              <a
+                href={item.draftUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`label px-3 py-1.5 rounded-sm transition-colors ${
+                  isSlack
+                    ? "bg-slack text-paper-raised hover:bg-slack/90"
+                    : "bg-email text-paper-raised hover:bg-email/90"
+                }`}
+              >
+                Open draft in {sourceLabel} ↗
+              </a>
+            ) : (
+              <span className="label text-ink-faint">
+                Draft will appear in {sourceLabel} after the next brief
+              </span>
+            )}
             <button
               onClick={copyDraft}
               className="label text-ink hover:text-accent transition-colors underline decoration-rule decoration-1 underline-offset-4 hover:decoration-accent"
