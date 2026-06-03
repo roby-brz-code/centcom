@@ -3,18 +3,23 @@
 import { useState } from "react"
 import { ActionItem } from "@/types/brief"
 
-export default function ActionCard({ item, index }: { item: ActionItem; index: number }) {
+export default function ActionCard({
+  item,
+  index,
+  onDismiss,
+}: {
+  item: ActionItem
+  index: number
+  onDismiss: () => void
+}) {
   const [expanded, setExpanded] = useState(false)
   const [copied, setCopied] = useState(false)
-  const [done, setDone] = useState(false)
 
   function copyDraft() {
     navigator.clipboard.writeText(item.draft)
     setCopied(true)
     setTimeout(() => setCopied(false), 2000)
   }
-
-  if (done) return null
 
   const isSlack = item.source === "slack"
   const sourceLabel = isSlack ? "Slack" : "Email"
@@ -145,7 +150,7 @@ export default function ActionCard({ item, index }: { item: ActionItem; index: n
               Open original ↗
             </a>
             <button
-              onClick={() => setDone(true)}
+              onClick={onDismiss}
               className="label text-ink-faint hover:text-ink transition-colors ml-auto"
             >
               Dismiss
