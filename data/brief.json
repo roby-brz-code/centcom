@@ -5,20 +5,6 @@
     {
       "id": 1,
       "source": "email",
-      "sender": "Gabe Stroup (Spintime / CGS)",
-      "subject": "Settlement Account Still Not Set Up",
-      "preview": "Hi Roby, Just following up here!",
-      "summary": "Gabe submitted the settlement form on May 29 and has now followed up three times — May 29, Jun 1, and again today. Settlement account still not set up. Escrow top-up also needed per Tim Dearing.",
-      "draft": "Hi Gabe, apologies for the delay — your settlement account is being set up now and I'll have the details across to you today. Will follow up on the escrow top-up separately.\n\nRob",
-      "link": "https://mail.google.com/mail/u/0/#inbox/19e7414aafa7591a",
-      "time": "1:23pm",
-      "urgent": true,
-      "overduedays": 5,
-      "draftUrl": "https://mail.google.com/mail/u/0/#drafts"
-    },
-    {
-      "id": 2,
-      "source": "email",
       "sender": "Numeral",
       "subject": "Incorrect State Tax Portal Credentials",
       "preview": "To avoid late filings Numeral requires working login credentials for: Idaho, Minnesota, Kentucky, Alabama, New Jersey",
@@ -30,7 +16,7 @@
       "draftUrl": "https://mail.google.com/mail/u/0/#drafts"
     },
     {
-      "id": 3,
+      "id": 2,
       "source": "slack",
       "sender": "Nic Tan",
       "subject": "GearPaw First Settlement — 1 Month Overdue",
@@ -44,7 +30,7 @@
       "draftUrl": "https://breezecash.slack.com/archives/D0A267YMSQK"
     },
     {
-      "id": 4,
+      "id": 3,
       "source": "slack",
       "sender": "Marty Wasserman",
       "subject": "Anthropic Ramp Card — Needs Payoff",
@@ -57,7 +43,7 @@
       "draftUrl": "https://breezecash.slack.com/archives/D0AF9N808Q3"
     },
     {
-      "id": 5,
+      "id": 4,
       "source": "slack",
       "sender": "Bryan Hagen",
       "subject": "Stock Option in Pulley + Choice Bank ACH Confirmation",
@@ -70,7 +56,7 @@
       "draftUrl": "https://breezecash.slack.com/archives/D08PCBYSATW"
     },
     {
-      "id": 6,
+      "id": 5,
       "source": "email",
       "sender": "Bill.com",
       "subject": "Approval needed — Alpha Surety payment",
@@ -82,7 +68,7 @@
       "urgent": true
     },
     {
-      "id": 7,
+      "id": 6,
       "source": "email",
       "sender": "Bill.com",
       "subject": "Approval needed — Bird & Bird LLP (GBP)",
@@ -94,7 +80,7 @@
       "urgent": true
     },
     {
-      "id": 8,
+      "id": 7,
       "source": "email",
       "sender": "Rob Miller",
       "subject": "Rob + Rob Weekly Checkin",
@@ -107,7 +93,7 @@
       "draftUrl": "https://mail.google.com/mail/u/0/#drafts"
     },
     {
-      "id": 9,
+      "id": 8,
       "source": "slack",
       "sender": "Dom",
       "subject": "Head of Finance — Agency Candidate Profiles",
@@ -120,7 +106,7 @@
       "draftUrl": "https://breezecash.slack.com/archives/D09A93AU9MF"
     },
     {
-      "id": 10,
+      "id": 9,
       "source": "email",
       "sender": "Kim Petry (Burkland)",
       "subject": "Breeze Model Updates — Meeting Invite + Projections Shared",
@@ -133,7 +119,7 @@
       "draftUrl": "https://mail.google.com/mail/u/0/#drafts"
     },
     {
-      "id": 11,
+      "id": 10,
       "source": "email",
       "sender": "Michael Kim",
       "subject": "Invoice for May",
@@ -146,7 +132,7 @@
       "draftUrl": "https://mail.google.com/mail/u/0/#drafts"
     },
     {
-      "id": 12,
+      "id": 11,
       "source": "email",
       "sender": "Ramp",
       "subject": "4 Reimbursements to Review",
@@ -158,7 +144,7 @@
       "urgent": false
     },
     {
-      "id": 13,
+      "id": 12,
       "source": "email",
       "sender": "Aranca (Akancha Mittal)",
       "subject": "Gift & Estate Valuation — Follow-up Questions",
@@ -173,6 +159,12 @@
     }
   ],
   "fyis": [
+    {
+      "sender": "Gabe Stroup (Spintime / CGS)",
+      "summary": "Settlement account set up, $2k escrow wire sent and confirmed in dashboard — fully resolved today",
+      "time": "2:37pm",
+      "source": "email"
+    },
     {
       "sender": "SVB",
       "summary": "Wire successful + 5 payments processed (LuqEE, Emberfund, Galaxybidz, Division 1, Gateway Guardian Admin) + 5 payments scheduled (CGS, HIGGS, Atlasv, Atari, Emberfund) + 4 new recipients added",
