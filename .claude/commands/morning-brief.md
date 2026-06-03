@@ -1,13 +1,24 @@
-You are running Roby's morning brief. Pull everything from the last 24 hours, triage it, and present a clean action feed with drafts ready to send.
+You are running Roby's morning brief. Pull everything from the last 48 hours, triage it, and present a clean action feed with drafts ready to send.
 
 ## Step 1 — Fetch in parallel
 
-Call these three tools simultaneously:
-- `search_threads` (Gmail): query `newer_than:1d in:inbox`, pageSize 50
-- `slack_search_public_and_private` (Slack): query `to:me after:<yesterday's date YYYY-MM-DD>`, sort by timestamp, limit 20, exclude bots — catches explicit @mentions and DMs directed to you
-- `slack_search_public_and_private` (Slack): query `after:<yesterday's date YYYY-MM-DD>`, channel_types `im,mpim`, sort by timestamp, limit 20, exclude bots — catches all DM and group DM activity regardless of @mention
+Today's date is available as context. Calculate:
+- `<yesterday>` = today minus 1 day, formatted YYYY-MM-DD
+- `<2daysago>` = today minus 2 days, formatted YYYY-MM-DD
 
-Merge and deduplicate the two Slack result sets by message_ts before triaging.
+Call these **five** tools simultaneously:
+
+**Gmail:**
+- `search_threads`: query `newer_than:2d in:inbox`, pageSize 50
+
+**Slack — broad sweeps (use `<2daysago>` for 48hr coverage):**
+- `slack_search_public_and_private`: query `to:me after:<2daysago>`, sort by timestamp, limit 30, exclude bots — catches explicit @mentions and DMs directed to you
+- `slack_search_public_and_private`: query `after:<2daysago>`, channel_types `im,mpim`, sort by timestamp, limit 30, exclude bots — catches all DM and group DM activity regardless of @mention
+
+**Slack — explicit DM channel reads for known active contacts (use `slack_read_channel` with the user_id as channel_id, limit 10 each):**
+- Read DMs from Roby's most active contacts. Look up user IDs for: Nic Tan, Bryan Hagen, Marty Wasserman, Dom, Meredith Grife, Steph Dang. Use `slack_search_users` first if you don't have IDs, then call `slack_read_channel` for each. This catches messages where Roby was the last sender — those won't appear in `to:me` or `im,mpim` searches because Slack doesn't surface them as "received."
+
+Merge and deduplicate ALL Slack results by message_ts before triaging. For DM channel reads, only include messages where the last message is from someone other than Roby (i.e. waiting on a reply), OR where there's a thread Roby hasn't responded to.
 
 ## Step 2 — Triage
 
