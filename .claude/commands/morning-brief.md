@@ -2,9 +2,12 @@ You are running Roby's morning brief. Pull everything from the last 24 hours, tr
 
 ## Step 1 — Fetch in parallel
 
-Call these two tools simultaneously:
+Call these three tools simultaneously:
 - `search_threads` (Gmail): query `newer_than:1d in:inbox`, pageSize 50
-- `slack_search_public_and_private` (Slack): query `to:me after:<yesterday's date YYYY-MM-DD>`, sort by timestamp, limit 20, exclude bots
+- `slack_search_public_and_private` (Slack): query `to:me after:<yesterday's date YYYY-MM-DD>`, sort by timestamp, limit 20, exclude bots — catches explicit @mentions and DMs directed to you
+- `slack_search_public_and_private` (Slack): query `after:<yesterday's date YYYY-MM-DD>`, channel_types `im,mpim`, sort by timestamp, limit 20, exclude bots — catches all DM and group DM activity regardless of @mention
+
+Merge and deduplicate the two Slack result sets by message_ts before triaging.
 
 ## Step 2 — Triage
 
