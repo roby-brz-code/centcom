@@ -2,18 +2,19 @@ You are running Roby's morning brief. Pull everything from the last 48 hours, tr
 
 ## Step 1 — Fetch in parallel
 
-Today's date is available as context. Calculate:
-- `<yesterday>` = today minus 1 day, formatted YYYY-MM-DD
-- `<2daysago>` = today minus 2 days, formatted YYYY-MM-DD
+Today's date is available as context. Calculate the lookback date as follows:
+
+- **Default**: 3 days ago (72hr window), formatted YYYY-MM-DD → call this `<lookback>`
+- **Weekend override**: If today is Monday, set `<lookback>` to the prior Thursday instead — this ensures Thursday + Friday activity is always captured after the weekend gap
 
 Call these **five** tools simultaneously:
 
 **Gmail:**
-- `search_threads`: query `newer_than:2d in:inbox`, pageSize 50
+- `search_threads`: query `newer_than:3d in:inbox`, pageSize 50 (or `after:<lookback>` if Monday)
 
-**Slack — broad sweeps (use `<2daysago>` for 48hr coverage):**
-- `slack_search_public_and_private`: query `to:me after:<2daysago>`, sort by timestamp, limit 30, exclude bots — catches explicit @mentions and DMs directed to you
-- `slack_search_public_and_private`: query `after:<2daysago>`, channel_types `im,mpim`, sort by timestamp, limit 30, exclude bots — catches all DM and group DM activity regardless of @mention
+**Slack — broad sweeps:**
+- `slack_search_public_and_private`: query `to:me after:<lookback>`, sort by timestamp, limit 30, exclude bots — catches explicit @mentions and DMs directed to you
+- `slack_search_public_and_private`: query `after:<lookback>`, channel_types `im,mpim`, sort by timestamp, limit 30, exclude bots — catches all DM and group DM activity regardless of @mention
 
 **Slack — explicit DM channel reads for known active contacts (use `slack_read_channel` with the user_id as channel_id, limit 10 each):**
 - Read DMs from Roby's most active contacts. Look up user IDs for: Nic Tan, Bryan Hagen, Marty Wasserman, Dom, Meredith Grife, Steph Dang. Use `slack_search_users` first if you don't have IDs, then call `slack_read_channel` for each. This catches messages where Roby was the last sender — those won't appear in `to:me` or `im,mpim` searches because Slack doesn't surface them as "received."
