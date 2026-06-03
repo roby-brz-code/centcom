@@ -1,0 +1,49 @@
+name: Daily Revenue & Volume to Slack
+
+on:
+  schedule:
+    # 08:00 UTC daily. Adjust to your timezone as needed.
+    - cron: "0 8 * * *"
+  workflow_dispatch: {} # allow manual runs from the Actions tab
+
+permissions:
+  contents: read
+
+concurrency:
+  group: daily-volume-revenue
+  cancel-in-progress: false
+
+jobs:
+  post:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - run: npm ci
+
+      - name: Install Playwright Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Write BigQuery service-account key
+        env:
+          BQ_SA_KEY: ${{ secrets.BQ_SA_KEY }}
+        run: |
+          printf '%s' "$BQ_SA_KEY" > "$RUNNER_TEMP/sa.json"
+          echo "GOOGLE_APPLICATION_CREDENTIALS=$RUNNER_TEMP/sa.json" >> "$GITHUB_ENV"
+
+      - name: Build chart and post to Slack
+        env:
+          BQ_PROJECT: beamo-payments-production
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+          SLACK_CHANNEL_ID: ${{ secrets.SLACK_CHANNEL_ID }}
+        run: node jobs/daily-volume-revenue/run.mjs
+
+      - name: Cleanup credentials
+        if: always()
+        run: rm -f "$RUNNER_TEMP/sa.json"

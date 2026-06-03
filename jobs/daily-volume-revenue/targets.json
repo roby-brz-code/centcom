@@ -1,0 +1,13 @@
+{
+  "year": 2026,
+  "currency": "USD",
+  "revenue": {
+    "annualTarget": 164000000,
+    "label": "Revenue"
+  },
+  "volume": {
+    "annualTarget": 4000000000,
+    "label": "Volume",
+    "_note": "PLACEHOLDER. Roby to supply the real annual volume target. The '50% non-stake concentration' figure does not map to a single volume number in the metrics layer — confirm what metric/target you want plotted here."
+  }
+}
