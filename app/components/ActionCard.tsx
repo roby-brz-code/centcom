@@ -14,16 +14,27 @@ export default function ActionCard({
 }) {
   const [expanded, setExpanded] = useState(false)
   const [copied, setCopied] = useState(false)
-
-  function copyDraft() {
-    navigator.clipboard.writeText(item.draft)
-    setCopied(true)
-    setTimeout(() => setCopied(false), 2000)
-  }
+  const [editedDraft, setEditedDraft] = useState(item.draft)
+  const [editing, setEditing] = useState(false)
 
   const isSlack = item.source === "slack"
   const sourceLabel = isSlack ? "Slack" : "Email"
   const sourceColor = isSlack ? "text-slack" : "text-email"
+  const borderColor = isSlack ? "border-slack/40" : "border-email/40"
+  const isDirty = editedDraft !== item.draft
+
+  function copyDraft() {
+    navigator.clipboard.writeText(editedDraft)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
+  }
+
+  function copyAndOpen() {
+    navigator.clipboard.writeText(editedDraft)
+    window.open(item.draftUrl ?? item.link, "_blank", "noopener,noreferrer")
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
+  }
 
   return (
     <article
@@ -101,45 +112,78 @@ export default function ActionCard({
             {item.summary}
           </p>
 
-          {/* Draft — framed like a quoted reply, not a SaaS textbox */}
-          <div
-            className={`border-l-2 pl-4 mb-5 ${
-              isSlack ? "border-slack/40" : "border-email/40"
-            }`}
-          >
-            <div className="label text-ink-faint mb-2">
-              Draft reply{item.draftUrl ? ` · ready in ${sourceLabel}` : ""}
+          {/* Draft — editable for Slack, read-only for email (draft lives in Gmail) */}
+          <div className={`border-l-2 pl-4 mb-5 ${borderColor}`}>
+            <div className="label text-ink-faint mb-2 flex items-center gap-3">
+              <span>
+                Draft reply{item.draftUrl && !isSlack ? ` · ready in ${sourceLabel}` : ""}
+                {isDirty && <span className="ml-2 text-accent">· edited</span>}
+              </span>
+              {isSlack && !editing && (
+                <button
+                  onClick={() => setEditing(true)}
+                  className="underline underline-offset-2 decoration-1 decoration-rule hover:text-ink transition-colors"
+                >
+                  Edit
+                </button>
+              )}
+              {isSlack && editing && (
+                <button
+                  onClick={() => { setEditing(false); setEditedDraft(item.draft) }}
+                  className="underline underline-offset-2 decoration-1 decoration-rule hover:text-ink transition-colors"
+                >
+                  Reset
+                </button>
+              )}
             </div>
-            <p className="font-body text-ink text-[1.05rem] leading-relaxed whitespace-pre-line max-w-prose">
-              {item.draft}
-            </p>
+
+            {isSlack && editing ? (
+              <textarea
+                value={editedDraft}
+                onChange={(e) => setEditedDraft(e.target.value)}
+                rows={Math.max(3, editedDraft.split("\n").length + 1)}
+                className={`w-full max-w-prose font-body text-ink text-[1.05rem] leading-relaxed bg-transparent border border-rule rounded-sm px-3 py-2 resize-none focus:outline-none focus:border-ink-faint transition-colors`}
+                autoFocus
+              />
+            ) : (
+              <p
+                className="font-body text-ink text-[1.05rem] leading-relaxed whitespace-pre-line max-w-prose cursor-text"
+                onClick={() => isSlack && setEditing(true)}
+              >
+                {editedDraft}
+              </p>
+            )}
           </div>
 
-          {/* Actions — open the ready-made draft, or fall back to the thread */}
+          {/* Actions */}
           <div className="flex items-center gap-5 flex-wrap">
-            {item.draftUrl ? (
+            {isSlack ? (
+              <button
+                onClick={copyAndOpen}
+                className={`label px-3 py-1.5 rounded-sm transition-colors bg-slack text-paper-raised hover:bg-slack/90`}
+              >
+                {copied ? "Copied ✓ — paste in Slack" : "Copy & open Slack ↗"}
+              </button>
+            ) : item.draftUrl ? (
               <a
                 href={item.draftUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className={`label px-3 py-1.5 rounded-sm transition-colors ${
-                  isSlack
-                    ? "bg-slack text-paper-raised hover:bg-slack/90"
-                    : "bg-email text-paper-raised hover:bg-email/90"
-                }`}
+                className="label px-3 py-1.5 rounded-sm transition-colors bg-email text-paper-raised hover:bg-email/90"
               >
-                Open draft in {sourceLabel} ↗
+                Open draft in Email ↗
               </a>
             ) : (
               <span className="label text-ink-faint">
                 Draft will appear in {sourceLabel} after the next brief
               </span>
             )}
+
             <button
               onClick={copyDraft}
               className="label text-ink hover:text-accent transition-colors underline decoration-rule decoration-1 underline-offset-4 hover:decoration-accent"
             >
-              {copied ? "Copied ✓" : "Copy"}
+              {copied && !isSlack ? "Copied ✓" : "Copy"}
             </button>
             <a
               href={item.link}
@@ -149,6 +193,7 @@ export default function ActionCard({
             >
               Open original ↗
             </a>
+
             <div className="ml-auto flex items-center gap-4">
               {item.draftUrl && (
                 <a
