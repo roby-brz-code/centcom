@@ -1,6 +1,6 @@
 {
   "date": "Wednesday 3 Jun",
-  "generatedAt": "2026-06-03T14:00:00Z",
+  "generatedAt": "2026-06-03T15:30:00Z",
   "actions": [
     {
       "id": 1,
@@ -31,6 +31,31 @@
     },
     {
       "id": 3,
+      "source": "slack",
+      "sender": "Nic Tan",
+      "subject": "GearPaw First Settlement Overdue",
+      "preview": "Hey Roby when can we expect the first settlement for GearPaw? Game has been live for over a month",
+      "summary": "GearPaw has been live for over a month with no settlement sent. Nic is also asking about a $196.76 gap between expected and received — wants to know if that's normal bank fees. Urgent: this is real money sitting unsettled.",
+      "draft": "Hey Nic, apologies — I'll get the GearPaw settlement out this week, covering the full Apr–May period. On the $196.76 gap, I'll check on our end and come back to you — could be bank transfer fees but let me confirm.\n\nRoby",
+      "link": "https://breeze.slack.com/archives/D0A267YMSQK",
+      "time": "Yesterday",
+      "urgent": true,
+      "overduedays": 30
+    },
+    {
+      "id": 4,
+      "source": "slack",
+      "sender": "Marty Wasserman",
+      "subject": "Anthropic Ramp Card — Needs Payoff",
+      "preview": "I went ahead and paid off the overdue Anthropic invoices on my Ramp card today. Thirteen of them",
+      "summary": "Marty paid ~$25k+ of overdue Anthropic invoices out of his own Ramp card (13 invoices, all old self-serve ones). He's uploaded receipts and asking Roby to pay the card off soon so he has headroom back. Needs acknowledgment and payment.",
+      "draft": "Hey Marty, thanks for taking care of all that — really appreciate it. I'll get the card paid off today. Can you send me the total amount so I can make sure I clear it fully?\n\nRoby",
+      "link": "https://breeze.slack.com/archives/D0AF9N808Q3",
+      "time": "Jun 2",
+      "urgent": true
+    },
+    {
+      "id": 5,
       "source": "email",
       "sender": "Bill.com",
       "subject": "Approval needed — Alpha Surety payment",
@@ -42,7 +67,7 @@
       "urgent": true
     },
     {
-      "id": 4,
+      "id": 6,
       "source": "email",
       "sender": "Bill.com",
       "subject": "Approval needed — Bird & Bird LLP (GBP)",
@@ -54,7 +79,31 @@
       "urgent": true
     },
     {
-      "id": 5,
+      "id": 7,
+      "source": "slack",
+      "sender": "Bryan Hagen",
+      "subject": "Pulley Stock Reflection + Choice Bank ACH",
+      "preview": "Does the $12k wire reflect in Pulley? And confirming Choice Bank ACH is same as April 13 filing",
+      "summary": "Bryan has two open questions: (1) does the $12k wire show up in Pulley yet? (2) confirming that Choice Bank ACH details are the same as used on April 13. Both unanswered. Also has a Brico 3yr projections task tagged to Roby due in the next couple of days.",
+      "draft": "Hey Bryan, let me check Pulley now and come back to you — and yes, Choice Bank ACH details should be the same as the April 13 filing but I'll confirm. Will look at the Brico projections today as well.\n\nRoby",
+      "link": "https://breeze.slack.com/archives/D08PCBYSATW",
+      "time": "Yesterday",
+      "urgent": true
+    },
+    {
+      "id": 8,
+      "source": "slack",
+      "sender": "Dom",
+      "subject": "Head of Finance — Agency Candidate Profiles",
+      "preview": "Hey I fwd you an email from an agency im working with. Can you take a look and see what profiles interest you",
+      "summary": "Dom forwarded agency candidate profiles for the Head of Finance hire and asked Roby to flag who looks interesting. Only one stood out to Dom. Sent Jun 1, unanswered.",
+      "draft": "Hey Dom, just took a look — agreed the one you flagged is the strongest. Happy to do a first screen call if you can set it up. The others I'd pass on for now.\n\nRoby",
+      "link": "https://breeze.slack.com/archives/D09A93AU9MF",
+      "time": "Jun 1",
+      "urgent": false
+    },
+    {
+      "id": 9,
       "source": "email",
       "sender": "Will (Mercury)",
       "subject": "New Relationship Manager Intro",
@@ -67,7 +116,7 @@
       "draftUrl": "https://mail.google.com/mail/u/0/#drafts"
     },
     {
-      "id": 6,
+      "id": 10,
       "source": "email",
       "sender": "Michael Kim",
       "subject": "Invoice for May",
@@ -80,7 +129,7 @@
       "draftUrl": "https://mail.google.com/mail/u/0/#drafts"
     },
     {
-      "id": 7,
+      "id": 11,
       "source": "email",
       "sender": "Yuliy German / Jack Zhang (Blazesoft)",
       "subject": "Payout Funding Model Question",
@@ -93,7 +142,7 @@
       "draftUrl": "https://mail.google.com/mail/u/0/#drafts"
     },
     {
-      "id": 8,
+      "id": 12,
       "source": "email",
       "sender": "Ramp",
       "subject": "4 Reimbursements to Review",
@@ -105,7 +154,7 @@
       "urgent": false
     },
     {
-      "id": 9,
+      "id": 13,
       "source": "email",
       "sender": "Aranca (Akancha Mittal)",
       "subject": "Gift & Estate Valuation — Follow-up Questions",
@@ -185,6 +234,18 @@
       "summary": "FIN-266 AP review + Bill.com approvals added to backlog",
       "time": "7:05am",
       "source": "email"
+    },
+    {
+      "sender": "Marty Wasserman",
+      "summary": "Receipts uploaded for all Anthropic invoices paid on Ramp card",
+      "time": "Jun 2 2:49am",
+      "source": "slack"
+    },
+    {
+      "sender": "Steph Dang",
+      "summary": "Philip leaving HH on Thursday; Steph will cover. Medicare/social security deduction from paycheck — Steph to follow up",
+      "time": "Recent",
+      "source": "slack"
     }
   ]
 }
