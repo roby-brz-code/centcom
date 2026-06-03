@@ -116,7 +116,7 @@ export default function ActionCard({
           </div>
 
           {/* Actions — open the ready-made draft, or fall back to the thread */}
-          <div className="flex items-center gap-5">
+          <div className="flex items-center gap-5 flex-wrap">
             {item.draftUrl ? (
               <a
                 href={item.draftUrl}
@@ -149,12 +149,25 @@ export default function ActionCard({
             >
               Open original ↗
             </a>
-            <button
-              onClick={onDismiss}
-              className="label text-ink-faint hover:text-ink transition-colors ml-auto"
-            >
-              Dismiss
-            </button>
+            <div className="ml-auto flex items-center gap-4">
+              {item.draftUrl && (
+                <a
+                  href={item.draftUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={onDismiss}
+                  className="label text-ink-faint hover:text-accent transition-colors underline decoration-rule decoration-1 underline-offset-4 hover:decoration-accent"
+                >
+                  Delete draft & dismiss ↗
+                </a>
+              )}
+              <button
+                onClick={onDismiss}
+                className="label text-ink-faint hover:text-ink transition-colors"
+              >
+                Dismiss
+              </button>
+            </div>
           </div>
         </div>
       )}
