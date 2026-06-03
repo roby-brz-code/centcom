@@ -22,6 +22,7 @@ const jetbrainsMono = JetBrains_Mono({
 export const metadata: Metadata = {
   title: "Morning Brief",
   description: "Your daily digest across email and Slack",
+  icons: { icon: "/favicon.svg" },
 };
 
 export default function RootLayout({
