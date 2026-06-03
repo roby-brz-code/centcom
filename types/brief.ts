@@ -22,6 +22,7 @@ export interface FYIItem {
   summary: string
   time: string
   source?: Source
+  link?: string
 }
 
 export interface Brief {

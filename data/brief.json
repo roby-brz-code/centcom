@@ -163,103 +163,120 @@
       "sender": "Gabe Stroup (Spintime / CGS)",
       "summary": "Settlement account set up, $2k escrow wire sent and confirmed in dashboard — fully resolved today",
       "time": "2:37pm",
-      "source": "email"
+      "source": "email",
+      "link": "https://mail.google.com/mail/u/0/#inbox/19e7414aafa7591a"
     },
     {
       "sender": "SVB",
       "summary": "Wire successful + 5 payments processed (LuqEE, Emberfund, Galaxybidz, Division 1, Gateway Guardian Admin) + 5 payments scheduled (CGS, HIGGS, Atlasv, Atari, Emberfund) + 4 new recipients added",
       "time": "1:47–9:27am",
-      "source": "email"
+      "source": "email",
+      "link": "https://mail.google.com/mail/u/0/#inbox/19e8cccbcf0f8af3"
     },
     {
       "sender": "Breeze Platform",
       "summary": "8 merchant team invites — Fire Throne, EBooksRealm, Dungeon Warriors, CaseBattle, Backspin Games, CashBack-Now, Blazesoft, Spintime",
       "time": "1:39–1:40am",
-      "source": "email"
+      "source": "email",
+      "link": "https://mail.google.com/mail/u/0/#inbox/19e8b2341c727268"
     },
     {
       "sender": "Nic Tan",
       "summary": "HIGGS settlement cycle change confirmed — all 3 games moving to monthly, first GearPaw settlement (Apr–May) to be arranged",
       "time": "3:23am",
-      "source": "email"
+      "source": "email",
+      "link": "https://mail.google.com/mail/u/0/#inbox/19e8b7d072f19990"
     },
     {
       "sender": "Anthropic",
       "summary": "2 new invoices: #QF16TVSP-0135 and #QF16TVSP-0136",
       "time": "3:19am",
-      "source": "email"
+      "source": "email",
+      "link": "https://mail.google.com/mail/u/0/#inbox/19e8b7e14e9d353b"
     },
     {
       "sender": "Burkland Associates",
       "summary": "Invoice Breeze Inv 1002 sent directly — ignore prior QuickBooks notification",
       "time": "3:11am",
-      "source": "email"
+      "source": "email",
+      "link": "https://mail.google.com/mail/u/0/#inbox/19e8b7732034d303"
     },
     {
       "sender": "Bill.com",
       "summary": "Payments scheduled for Breeze Labs Inc confirmed",
       "time": "2:19am",
-      "source": "email"
+      "source": "email",
+      "link": "https://mail.google.com/mail/u/0/#inbox/19e8b478249c8885"
     },
     {
       "sender": "Worldpay",
       "summary": "IC++ invoice 437127541 + MI report for PO4091318921",
       "time": "6:38am",
-      "source": "email"
+      "source": "email",
+      "link": "https://mail.google.com/mail/u/0/#inbox/19e8c34a5790e7b6"
     },
     {
       "sender": "Brex",
       "summary": "May 1–31 statements ready to download",
       "time": "6:57am",
-      "source": "email"
+      "source": "email",
+      "link": "https://mail.google.com/mail/u/0/#inbox/19e8c463b5f11cc8"
     },
     {
       "sender": "State Tax Portals",
       "summary": "New device logins on Colorado, Mississippi, Indiana tax portals (Numeral filing activity)",
       "time": "12:32–7:23am",
-      "source": "email"
+      "source": "email",
+      "link": "https://mail.google.com/mail/u/0/#inbox/19e8c5df13cbe951"
     },
     {
       "sender": "Linear",
       "summary": "FIN-266 AP review + Bill.com approvals added to backlog",
       "time": "7:05am",
-      "source": "email"
+      "source": "email",
+      "link": "https://mail.google.com/mail/u/0/#inbox/19e8c4d426396ff1"
     },
     {
       "sender": "Wei Xu",
       "summary": "Breeze Merchant Bank Details spreadsheet shared for editing",
       "time": "12:32am",
-      "source": "email"
+      "source": "email",
+      "link": "https://mail.google.com/mail/u/0/#inbox/19e8ae57d85af463"
     },
     {
       "sender": "Alain Glanzman",
       "summary": "Grasshopper Bank CDO offering savings rate increase to 3.55% (from 3%) + FDIC-insured Intrafi option — shared for visibility, no commitment made",
       "time": "Recent",
-      "source": "slack"
+      "source": "slack",
+      "link": "https://breezecash.slack.com/archives/D0AF9N808Q3"
     },
     {
       "sender": "Steph Dang",
       "summary": "Back in office Thursday — Philip's last-week HH possibly that evening. Medicare deduction follow-up pending when she returns.",
       "time": "Jun 2 6:17pm",
-      "source": "slack"
+      "source": "slack",
+      "link": "https://breezecash.slack.com/archives/D0AJ7L9DP16"
     },
     {
       "sender": "Marty Wasserman",
       "summary": "Receipts uploaded for all 13 Anthropic invoices paid on Ramp card",
       "time": "Jun 2 2:49am",
-      "source": "slack"
+      "source": "slack",
+      "link": "https://breezecash.slack.com/archives/D0AF9N808Q3"
     },
     {
       "sender": "Michael Kim",
       "summary": "Accepted Daily Recon Standup calendar invite",
       "time": "7:00pm",
-      "source": "email"
+      "source": "email",
+      "link": "https://mail.google.com/mail/u/0/#inbox/19e89b5760118103"
     },
     {
       "sender": "Samuel Duan",
       "summary": "Accepted Weekly Recon Sync for Tue Jun 2",
       "time": "3:45pm",
-      "source": "email"
+      "source": "email",
+      "link": "https://mail.google.com/mail/u/0/#inbox/19e8902e30897e15"
     }
   ]
 }

@@ -21,11 +21,17 @@ Call these **five** tools simultaneously:
 
 Merge and deduplicate ALL Slack results by message_ts before triaging. For DM channel reads, only include messages where the last message is from someone other than Roby (i.e. waiting on a reply), OR where there's a thread Roby hasn't responded to.
 
+## Step 1b — Verify email threads (before triaging)
+
+For every email thread that looks like an ACTION, call `get_thread` to fetch the full thread. Check whether the **most recent message** is from Roby (a SENT message). If it is, the thread is already replied to — classify it as FYI or discard, not ACTION. This prevents stale search snapshots from surfacing threads Roby already handled.
+
+Do this in parallel for all candidate email action threads.
+
 ## Step 2 — Triage
 
 Classify every item into one of:
-- **ACTION** — needs a reply or decision from Roby (direct questions, merchant issues, team asks, financial ops, compliance, hiring)
-- **FYI** — automated notifications, statements, newsletters, marketing (no reply needed)
+- **ACTION** — needs a reply or decision from Roby (direct questions, merchant issues, team asks, financial ops, compliance, hiring). Only include if the latest message in the thread is NOT from Roby.
+- **FYI** — automated notifications, statements, newsletters, marketing, or threads where Roby has already replied (no further action needed)
 
 Discard pure noise (Uber promo, WeWork newsletter, etc.).
 
@@ -62,7 +68,8 @@ Write the results to `data/brief.json` in the repo using this exact schema:
       "sender": "Sender Name",
       "summary": "One-line summary",
       "time": "9:30am",
-      "source": "email" | "slack"
+      "source": "email" | "slack",
+      "link": "https://... (Gmail thread link or Slack permalink)"
     }
   ]
 }

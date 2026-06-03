@@ -86,9 +86,20 @@ export default function Home() {
                     <span className="font-display text-ink text-[0.95rem] flex-shrink-0" style={{ fontWeight: 540 }}>
                       {fyi.sender}
                     </span>
-                    <span className="font-body italic text-ink-soft text-[0.98rem] leading-snug flex-1">
-                      {fyi.summary}
-                    </span>
+                    {fyi.link ? (
+                      <a
+                        href={fyi.link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="font-body italic text-ink-soft text-[0.98rem] leading-snug flex-1 hover:text-ink transition-colors underline decoration-rule decoration-1 underline-offset-2 hover:decoration-ink-faint"
+                      >
+                        {fyi.summary}
+                      </a>
+                    ) : (
+                      <span className="font-body italic text-ink-soft text-[0.98rem] leading-snug flex-1">
+                        {fyi.summary}
+                      </span>
+                    )}
                     <span className="label text-ink-faint flex-shrink-0 tabular-nums">{fyi.time}</span>
                   </li>
                 ))}
