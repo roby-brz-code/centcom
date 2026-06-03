@@ -1,9 +1,23 @@
 {
   "date": "Wednesday 3 Jun",
-  "generatedAt": "2026-06-03T15:30:00Z",
+  "generatedAt": "2026-06-03T16:00:00Z",
   "actions": [
     {
       "id": 1,
+      "source": "email",
+      "sender": "Gabe Stroup (Spintime / CGS)",
+      "subject": "Settlement Account Still Not Set Up",
+      "preview": "Hi Roby, Just following up here!",
+      "summary": "Gabe submitted the settlement form on May 29 and has now followed up three times — May 29, Jun 1, and again today. Settlement account still not set up. Escrow top-up also needed per Tim Dearing.",
+      "draft": "Hi Gabe, apologies for the delay — your settlement account is being set up now and I'll have the details across to you today. Will follow up on the escrow top-up separately.\n\nRob",
+      "link": "https://mail.google.com/mail/u/0/#inbox/19e7414aafa7591a",
+      "time": "1:23pm",
+      "urgent": true,
+      "overduedays": 5,
+      "draftUrl": "https://mail.google.com/mail/u/0/#drafts"
+    },
+    {
+      "id": 2,
       "source": "email",
       "sender": "Numeral",
       "subject": "Incorrect State Tax Portal Credentials",
@@ -16,128 +30,118 @@
       "draftUrl": "https://mail.google.com/mail/u/0/#drafts"
     },
     {
-      "id": 2,
-      "source": "email",
-      "sender": "Gabe Stroup (Spintime / CGS)",
-      "subject": "Settlement Account Still Not Set Up",
-      "preview": "Hi Roby, Just following up here!",
-      "summary": "Gabe submitted the settlement form on May 29 as requested and has now followed up twice — June 1 and again today. Soft launch was planned. Escrow top-up also needed per Tim.",
-      "draft": "Hi Gabe, apologies for the slow turnaround — your settlement account is being set up now and I'll have the details across to you today. Will follow up separately on the escrow top-up as well.\n\nRob",
-      "link": "https://mail.google.com/mail/u/0/#inbox/19e7414aafa7591a",
-      "time": "1:23pm",
-      "urgent": true,
-      "overduedays": 5,
-      "draftUrl": "https://mail.google.com/mail/u/0/#drafts"
-    },
-    {
       "id": 3,
       "source": "slack",
       "sender": "Nic Tan",
-      "subject": "GearPaw First Settlement Overdue",
-      "preview": "Hey Roby when can we expect the first settlement for GearPaw? Game has been live for over a month",
-      "summary": "GearPaw has been live for over a month with no settlement sent. Nic is also asking about a $196.76 gap between expected and received — wants to know if that's normal bank fees. Urgent: this is real money sitting unsettled.",
-      "draft": "Hey Nic, apologies — I'll get the GearPaw settlement out this week, covering the full Apr–May period. On the $196.76 gap, I'll check on our end and come back to you — could be bank transfer fees but let me confirm.\n\nRoby",
+      "subject": "GearPaw First Settlement — 1 Month Overdue",
+      "preview": "hi roby, to confirm, HIGGS has 3 games live with us now... GearPaw (live for about 1 month now but yet to settle) - can you confirm when we can get 1st settlement out ASAP?",
+      "summary": "GearPaw has been live over a month with no settlement sent. Nic is also asking about a $196.76 gap between HIGGS dashboard total ($14,359.21) and what they received ($14,162.45) — Roby suggested bank fees but Nic wants confirmation.",
+      "draft": "Hey Nic, will get the GearPaw first settlement out today covering Apr–May. On the $196.76 gap — I said it was likely international bank fees and I'll get confirmation from our end and send across. Will update shortly.\n\nRoby",
       "link": "https://breeze.slack.com/archives/D0A267YMSQK",
-      "time": "Yesterday",
+      "time": "10:11pm",
       "urgent": true,
-      "overduedays": 30
+      "overduedays": 30,
+      "draftUrl": "https://breezecash.slack.com/archives/D0A267YMSQK"
     },
     {
       "id": 4,
       "source": "slack",
       "sender": "Marty Wasserman",
       "subject": "Anthropic Ramp Card — Needs Payoff",
-      "preview": "I went ahead and paid off the overdue Anthropic invoices on my Ramp card today. Thirteen of them",
-      "summary": "Marty paid ~$25k+ of overdue Anthropic invoices out of his own Ramp card (13 invoices, all old self-serve ones). He's uploaded receipts and asking Roby to pay the card off soon so he has headroom back. Needs acknowledgment and payment.",
-      "draft": "Hey Marty, thanks for taking care of all that — really appreciate it. I'll get the card paid off today. Can you send me the total amount so I can make sure I clear it fully?\n\nRoby",
+      "preview": "I'm just going to put the big Anthropic bill on my Ramp card, north of $25k. Once it lands, can you pay it off fairly soon so the card's free again?",
+      "summary": "Marty paid 13 overdue Anthropic invoices out of his own Ramp card (~$25k) and has a new large Anthropic bill landing too. He uploaded all receipts. Needs the card paid off so he has headroom for other expenses.",
+      "draft": "Hey Marty, thanks for handling all of that — I'll get the card paid off today. Can you send me the total so I clear it in full? And happy to take the receipts however's easiest for you.\n\nRoby",
       "link": "https://breeze.slack.com/archives/D0AF9N808Q3",
-      "time": "Jun 2",
-      "urgent": true
+      "time": "Jun 2 2:49am",
+      "urgent": true,
+      "draftUrl": "https://breezecash.slack.com/archives/D0AF9N808Q3"
     },
     {
       "id": 5,
+      "source": "slack",
+      "sender": "Bryan Hagen",
+      "subject": "Stock Option in Pulley + Choice Bank ACH Confirmation",
+      "preview": "Stock option - awesome! Thanks. Does that just reflect in Pulley later? Choice Bank: I printed the confirmation and it say ACH.",
+      "summary": "Bryan is asking (1) whether the $12k wire for his stock option exercise will show up in Pulley, and (2) confirming Choice Bank ACH details are same as the April 13 filing ($6,718.75). He cancelled the Brico 3yr projections task himself.",
+      "draft": "Hey Bryan, yes — the stock option exercise should reflect in Pulley once processed, usually a day or two. And confirmed on Choice Bank — same ACH details as the April 13 filing.\n\nRoby",
+      "link": "https://breeze.slack.com/archives/D08PCBYSATW",
+      "time": "5:48pm",
+      "urgent": true,
+      "draftUrl": "https://breezecash.slack.com/archives/D08PCBYSATW"
+    },
+    {
+      "id": 6,
       "source": "email",
       "sender": "Bill.com",
       "subject": "Approval needed — Alpha Surety payment",
       "preview": "Sign in to approve this bill.",
-      "summary": "Bill.com is requesting Roby's approval to pay Alpha Surety on behalf of Breeze Labs Inc. Needs to be actioned in the Bill.com dashboard.",
+      "summary": "Bill.com requesting approval to pay Alpha Surety for Breeze Labs Inc. Action needed in Bill.com dashboard.",
       "draft": "Approve via Bill.com dashboard — no email reply needed.",
       "link": "https://mail.google.com/mail/u/0/#inbox/19e8b3ef25928dcd",
       "time": "2:10am",
       "urgent": true
     },
     {
-      "id": 6,
+      "id": 7,
       "source": "email",
       "sender": "Bill.com",
       "subject": "Approval needed — Bird & Bird LLP (GBP)",
       "preview": "Sign in to approve this bill.",
-      "summary": "Bill.com is requesting Roby's approval to pay Bird & Bird LLP in GBP on behalf of Breeze Labs Inc. Needs to be actioned in the Bill.com dashboard.",
+      "summary": "Bill.com requesting approval to pay Bird & Bird LLP in GBP for Breeze Labs Inc. Action needed in Bill.com dashboard.",
       "draft": "Approve via Bill.com dashboard — no email reply needed.",
       "link": "https://mail.google.com/mail/u/0/#inbox/19e8b3cd7b9bff20",
       "time": "2:08am",
       "urgent": true
     },
     {
-      "id": 7,
-      "source": "slack",
-      "sender": "Bryan Hagen",
-      "subject": "Pulley Stock Reflection + Choice Bank ACH",
-      "preview": "Does the $12k wire reflect in Pulley? And confirming Choice Bank ACH is same as April 13 filing",
-      "summary": "Bryan has two open questions: (1) does the $12k wire show up in Pulley yet? (2) confirming that Choice Bank ACH details are the same as used on April 13. Both unanswered. Also has a Brico 3yr projections task tagged to Roby due in the next couple of days.",
-      "draft": "Hey Bryan, let me check Pulley now and come back to you — and yes, Choice Bank ACH details should be the same as the April 13 filing but I'll confirm. Will look at the Brico projections today as well.\n\nRoby",
-      "link": "https://breeze.slack.com/archives/D08PCBYSATW",
-      "time": "Yesterday",
-      "urgent": true
-    },
-    {
       "id": 8,
-      "source": "slack",
-      "sender": "Dom",
-      "subject": "Head of Finance — Agency Candidate Profiles",
-      "preview": "Hey I fwd you an email from an agency im working with. Can you take a look and see what profiles interest you",
-      "summary": "Dom forwarded agency candidate profiles for the Head of Finance hire and asked Roby to flag who looks interesting. Only one stood out to Dom. Sent Jun 1, unanswered.",
-      "draft": "Hey Dom, just took a look — agreed the one you flagged is the strongest. Happy to do a first screen call if you can set it up. The others I'd pass on for now.\n\nRoby",
-      "link": "https://breeze.slack.com/archives/D09A93AU9MF",
-      "time": "Jun 1",
-      "urgent": false
-    },
-    {
-      "id": 9,
       "source": "email",
-      "sender": "Will (Mercury)",
-      "subject": "New Relationship Manager Intro",
-      "preview": "Thanks as well Shadman, and great to meet you all on the Beamo team.",
-      "summary": "Will at Mercury introduced himself as the new RM replacing Shadman, copying K. Jacobi. Quick courtesy reply to acknowledge.",
-      "draft": "Hi Will, great to meet you — looking forward to working together. Feel free to reach out directly anytime.\n\nRob",
-      "link": "https://mail.google.com/mail/u/0/#inbox/19e84db74f72a475",
-      "time": "5:19pm",
+      "sender": "Rob Miller",
+      "subject": "Rob + Rob Weekly Checkin",
+      "preview": "Can we push to tomorrow?",
+      "summary": "Rob Miller asked to push the weekly check-in to tomorrow (Jun 3). Came in Jun 2 at 2:28pm, no reply sent yet.",
+      "draft": "Hey Rob, no problem — let's do tomorrow. Same time works?\n\nRob",
+      "link": "https://mail.google.com/mail/u/0/#inbox/19e88bcbc790e859",
+      "time": "2:28pm",
       "urgent": false,
       "draftUrl": "https://mail.google.com/mail/u/0/#drafts"
     },
     {
+      "id": 9,
+      "source": "slack",
+      "sender": "Dom",
+      "subject": "Head of Finance — Agency Candidate Profiles",
+      "preview": "Hey I fwd you an email from an agency im working with. Can you take a look and see what profiles interest you, only one really did for me.",
+      "summary": "Dom forwarded agency candidate profiles for the Head of Finance hire and asked Roby to flag who looks interesting. Only one stood out to Dom. Sent Jun 1, unanswered.",
+      "draft": "Hey Dom, just took a look — agreed the one you flagged is the strongest. Happy to do a first screen if you can set it up. Would pass on the others for now.\n\nRoby",
+      "link": "https://breeze.slack.com/archives/D09A93AU9MF",
+      "time": "Jun 1 1:46pm",
+      "urgent": false,
+      "draftUrl": "https://breezecash.slack.com/archives/D09A93AU9MF"
+    },
+    {
       "id": 10,
       "source": "email",
-      "sender": "Michael Kim",
-      "subject": "Invoice for May",
-      "preview": "Hey Robert Please see attached.",
-      "summary": "Michael Kim sent his May invoice and also accepted the Daily Recon Standup calendar invite. Invoice needs reviewing and processing.",
-      "draft": "Hi Michael, thanks for sending — I'll take a look and come back to you.\n\nRob",
-      "link": "https://mail.google.com/mail/u/0/#inbox/19e89b523aff6ac6",
-      "time": "6:59pm",
+      "sender": "Kim Petry (Burkland)",
+      "subject": "Breeze Model Updates — Meeting Invite + Projections Shared",
+      "preview": "Breeze Model Updates @ Tue 9 Jun 2026 10am – 11am (Eastern Time)",
+      "summary": "Kim Petry sent a Zoom invite for a Breeze Model Updates call on Jun 9 10am ET, and shared the Breeze Labs 2026 & 2027 Projections spreadsheet for review beforehand.",
+      "draft": "Hi Kim, accepted — looking forward to it. I'll review the projections ahead of Tuesday.\n\nRob",
+      "link": "https://mail.google.com/mail/u/0/#inbox/19e88da14a462f97",
+      "time": "3:00pm",
       "urgent": false,
       "draftUrl": "https://mail.google.com/mail/u/0/#drafts"
     },
     {
       "id": 11,
       "source": "email",
-      "sender": "Yuliy German / Jack Zhang (Blazesoft)",
-      "subject": "Payout Funding Model Question",
-      "preview": "Since we are using only the payouts option, how does funding work?",
-      "summary": "Yuliy replied adding Group VP Finance Jack Zhang and asking how the escrow funding model works for a payout-only setup. Roby sent the settlement form but didn't answer the funding question.",
-      "draft": "Hi Yuliy and Jack, for the payout-only setup, you fund a merchant escrow account on our side and we draw from that to fulfil payouts. I'll send across the account details for the initial top-up separately.\n\nRob",
-      "link": "https://mail.google.com/mail/u/0/#inbox/19e83c85fd3a2160",
-      "time": "4:01pm",
+      "sender": "Michael Kim",
+      "subject": "Invoice for May",
+      "preview": "Hey Robert Please see attached.",
+      "summary": "Michael Kim sent his May invoice. Needs reviewing and processing.",
+      "draft": "Hi Michael, thanks for sending — I'll take a look and come back to you.\n\nRob",
+      "link": "https://mail.google.com/mail/u/0/#inbox/19e89b523aff6ac6",
+      "time": "6:59pm",
       "urgent": false,
       "draftUrl": "https://mail.google.com/mail/u/0/#drafts"
     },
@@ -147,7 +151,7 @@
       "sender": "Ramp",
       "subject": "4 Reimbursements to Review",
       "preview": "You can approve or reject these reimbursements from your Ramp dashboard",
-      "summary": "4 pending reimbursements including $110 at Equinox Pine Street. Needs Roby's approval or rejection in the Ramp dashboard.",
+      "summary": "4 pending reimbursements including $110 at Equinox Pine Street. Needs approval or rejection in the Ramp dashboard.",
       "draft": "Review and approve in Ramp dashboard — no email reply needed.",
       "link": "https://mail.google.com/mail/u/0/#inbox/19e8da5bb908e310",
       "time": "1:21pm",
@@ -159,8 +163,8 @@
       "sender": "Aranca (Akancha Mittal)",
       "subject": "Gift & Estate Valuation — Follow-up Questions",
       "preview": "Hope you are doing well! I am kindly following up on the below mail.",
-      "summary": "Aranca sent follow-up valuation questions in December after Roby's Dec 4 response, then chased again Dec 23. No reply since. Millie was also asking about gift valuation yesterday — this is likely the thread she meant.",
-      "draft": "Hi Akancha, apologies for the delayed response — I'll review your follow-up questions and come back to you this week.\n\nRob",
+      "summary": "Aranca sent follow-up valuation questions in December after Roby's Dec 4 response, then chased again Dec 23. No reply since. Likely the thread Millie was asking about.",
+      "draft": "Hi Akancha, apologies for the very delayed response — I'll review your follow-up questions and come back to you this week.\n\nRob",
       "link": "https://mail.google.com/mail/u/0/#inbox/19ad95372bdf85bb",
       "time": "Dec 23",
       "urgent": false,
@@ -171,14 +175,14 @@
   "fyis": [
     {
       "sender": "SVB",
-      "summary": "5 payments processed + 5 scheduled + 4 new recipients created (Atari, Greenmint, CGS, Good Morning Services)",
+      "summary": "Wire successful + 5 payments processed (LuqEE, Emberfund, Galaxybidz, Division 1, Gateway Guardian Admin) + 5 payments scheduled (CGS, HIGGS, Atlasv, Atari, Emberfund) + 4 new recipients added",
       "time": "1:47–9:27am",
       "source": "email"
     },
     {
       "sender": "Breeze Platform",
-      "summary": "7 merchant team invites sent overnight — Fire Throne, EBooksRealm, Dungeon Warriors, CaseBattle, Backspin Games, CashBack-Now, Blazesoft",
-      "time": "1:40am",
+      "summary": "8 merchant team invites — Fire Throne, EBooksRealm, Dungeon Warriors, CaseBattle, Backspin Games, CashBack-Now, Blazesoft, Spintime",
+      "time": "1:39–1:40am",
       "source": "email"
     },
     {
@@ -195,7 +199,7 @@
     },
     {
       "sender": "Burkland Associates",
-      "summary": "Invoice Breeze Inv 1002 resent directly (ignore prior QuickBooks email per their follow-up)",
+      "summary": "Invoice Breeze Inv 1002 sent directly — ignore prior QuickBooks notification",
       "time": "3:11am",
       "source": "email"
     },
@@ -203,12 +207,6 @@
       "sender": "Bill.com",
       "summary": "Payments scheduled for Breeze Labs Inc confirmed",
       "time": "2:19am",
-      "source": "email"
-    },
-    {
-      "sender": "Wei Xu",
-      "summary": "Breeze Merchant Bank Details spreadsheet shared with you for editing",
-      "time": "12:32am",
       "source": "email"
     },
     {
@@ -225,8 +223,8 @@
     },
     {
       "sender": "State Tax Portals",
-      "summary": "New device logins on Colorado, Mississippi, and Indiana tax portals (Numeral filing activity)",
-      "time": "6:36–7:23am",
+      "summary": "New device logins on Colorado, Mississippi, Indiana tax portals (Numeral filing activity)",
+      "time": "12:32–7:23am",
       "source": "email"
     },
     {
@@ -236,16 +234,40 @@
       "source": "email"
     },
     {
-      "sender": "Marty Wasserman",
-      "summary": "Receipts uploaded for all Anthropic invoices paid on Ramp card",
-      "time": "Jun 2 2:49am",
+      "sender": "Wei Xu",
+      "summary": "Breeze Merchant Bank Details spreadsheet shared for editing",
+      "time": "12:32am",
+      "source": "email"
+    },
+    {
+      "sender": "Alain Glanzman",
+      "summary": "Grasshopper Bank CDO offering savings rate increase to 3.55% (from 3%) + FDIC-insured Intrafi option — shared for visibility, no commitment made",
+      "time": "Recent",
       "source": "slack"
     },
     {
       "sender": "Steph Dang",
-      "summary": "Philip leaving HH on Thursday; Steph will cover. Medicare/social security deduction from paycheck — Steph to follow up",
-      "time": "Recent",
+      "summary": "Back in office Thursday — Philip's last-week HH possibly that evening. Medicare deduction follow-up pending when she returns.",
+      "time": "Jun 2 6:17pm",
       "source": "slack"
+    },
+    {
+      "sender": "Marty Wasserman",
+      "summary": "Receipts uploaded for all 13 Anthropic invoices paid on Ramp card",
+      "time": "Jun 2 2:49am",
+      "source": "slack"
+    },
+    {
+      "sender": "Michael Kim",
+      "summary": "Accepted Daily Recon Standup calendar invite",
+      "time": "7:00pm",
+      "source": "email"
+    },
+    {
+      "sender": "Samuel Duan",
+      "summary": "Accepted Weekly Recon Sync for Tue Jun 2",
+      "time": "3:45pm",
+      "source": "email"
     }
   ]
 }
