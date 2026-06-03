@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 /**
- * Daily YTD revenue & volume vs target → Slack.
+ * Daily YTD revenue & volume → Slack.
  *
- * Flow: query BigQuery (read-only SA) → build cumulative actual + linear target
- * pace → render a chart to PNG with Playwright (fully offline, Chart.js inlined
- * from node_modules) → post the image to a Slack channel.
+ * Flow: query BigQuery (read-only SA) → build cumulative actuals → render a
+ * chart to PNG with Playwright (fully offline, Chart.js inlined from
+ * node_modules) → post the image to a Slack channel.
  *
  * Only aggregate, company-level totals leave BigQuery. No merchant rows, no PII.
  *
@@ -46,47 +46,28 @@ async function fetchDaily() {
   }));
 }
 
-/** Cumulative actuals + a linear target pace line across the full calendar year. */
-function buildSeries(daily, targets) {
-  const year = targets.year;
-  const daysInYear =
-    (Date.UTC(year + 1, 0, 1) - Date.UTC(year, 0, 1)) / 86_400_000;
-
+/** Cumulative actuals. */
+function buildSeries(daily) {
   const labels = [];
   const revActual = [];
   const volActual = [];
-  const revTarget = [];
-  const volTarget = [];
-
   let revCum = 0;
   let volCum = 0;
   for (const row of daily) {
     revCum += row.revenue;
     volCum += row.volume;
-    const d = new Date(`${row.date}T00:00:00Z`);
-    const dayOfYear =
-      Math.floor((d - Date.UTC(year, 0, 1)) / 86_400_000) + 1;
-    const pace = dayOfYear / daysInYear;
     labels.push(row.date);
     revActual.push(Math.round(revCum));
     volActual.push(Math.round(volCum));
-    revTarget.push(Math.round(targets.revenue.annualTarget * pace));
-    volTarget.push(Math.round(targets.volume.annualTarget * pace));
   }
-
-  const pct = (actual, annual) =>
-    annual ? (actual[actual.length - 1] / annual) * 100 : 0;
-
   return {
     labels,
     revActual,
     volActual,
-    revTarget,
-    volTarget,
     summary: {
       asOf: labels[labels.length - 1],
-      revenue: { ytd: revActual.at(-1), annual: targets.revenue.annualTarget, pct: pct(revActual, targets.revenue.annualTarget) },
-      volume: { ytd: volActual.at(-1), annual: targets.volume.annualTarget, pct: pct(volActual, targets.volume.annualTarget) },
+      revenue: { ytd: revActual.at(-1) },
+      volume: { ytd: volActual.at(-1) },
     },
   };
 }
@@ -99,21 +80,12 @@ function fmtUsd(n) {
 }
 
 /** Self-contained HTML page; Chart.js is inlined so nothing is fetched at render time. */
-async function buildHtml(series, targets) {
+async function buildHtml(series) {
   // chart.js' exports map exposes only "." — resolve the main entry (dist/chart.cjs)
   // and grab the sibling UMD build from the same dist dir.
   const chartJsPath = join(dirname(require.resolve("chart.js")), "chart.umd.js");
   const chartJs = await readFile(chartJsPath, "utf8");
   const { summary } = series;
-
-  const panel = (title, actual, target, pct, fmtLast) => ({
-    title,
-    pct: pct.toFixed(1),
-    sub: `${fmtLast(actual.at(-1))} of ${fmtLast(target.at(-1))} pace · target ${fmtLast(actual.at(-1) / (pct / 100) || 0)}`,
-  });
-
-  const revPanel = panel("Revenue", series.revActual, series.revTarget, summary.revenue.pct, fmtUsd);
-  const volPanel = panel("Volume", series.volActual, series.volTarget, summary.volume.pct, fmtUsd);
 
   return `<!doctype html><html><head><meta charset="utf-8"><style>
     body{margin:0;background:#0b0f17;color:#e6edf3;font:14px/1.4 -apple-system,Segoe UI,Roboto,sans-serif;width:1000px}
@@ -124,17 +96,16 @@ async function buildHtml(series, targets) {
     .card{flex:1;background:#131a26;border:1px solid #1f2a3a;border-radius:10px;padding:16px}
     .card .k{color:#8b98a9;font-size:12px;text-transform:uppercase;letter-spacing:.04em}
     .card .v{font-size:28px;font-weight:600;margin:4px 0}
-    .card .s{color:#8b98a9;font-size:12px}
     .charts{display:flex;gap:16px}
     .charts>div{flex:1;background:#131a26;border:1px solid #1f2a3a;border-radius:10px;padding:12px}
     canvas{width:100%!important;height:240px!important}
   </style><script>${chartJs}</script></head><body>
   <div class="wrap">
-    <h1>YTD Revenue &amp; Volume vs Target — ${targets.year}</h1>
-    <div class="as-of">As of ${summary.asOf} · cumulative actual vs linear target pace</div>
+    <h1>YTD Revenue &amp; Volume — 2026</h1>
+    <div class="as-of">As of ${summary.asOf} · cumulative actuals</div>
     <div class="cards">
-      <div class="card"><div class="k">Revenue · % to annual target</div><div class="v">${revPanel.pct}%</div><div class="s">${fmtUsd(summary.revenue.ytd)} YTD · ${fmtUsd(summary.revenue.annual)} target</div></div>
-      <div class="card"><div class="k">Volume · % to annual target</div><div class="v">${volPanel.pct}%</div><div class="s">${fmtUsd(summary.volume.ytd)} YTD · ${fmtUsd(summary.volume.annual)} target</div></div>
+      <div class="card"><div class="k">Revenue YTD</div><div class="v">${fmtUsd(summary.revenue.ytd)}</div></div>
+      <div class="card"><div class="k">Volume YTD</div><div class="v">${fmtUsd(summary.volume.ytd)}</div></div>
     </div>
     <div class="charts">
       <div><canvas id="rev"></canvas></div>
@@ -145,15 +116,13 @@ async function buildHtml(series, targets) {
     const labels = ${JSON.stringify(series.labels)};
     const opts = (title) => ({
       type:'line',
-      options:{responsive:false,animation:false,plugins:{title:{display:true,text:title,color:'#e6edf3'},legend:{labels:{color:'#8b98a9'}}},
+      options:{responsive:false,animation:false,plugins:{legend:{display:false},title:{display:true,text:title,color:'#e6edf3'}},
         scales:{x:{ticks:{color:'#566',maxTicksLimit:8},grid:{color:'#1f2a3a'}},y:{ticks:{color:'#566',callback:v=>'$'+(v/1e6).toFixed(0)+'M'},grid:{color:'#1f2a3a'}}}}
     });
     new Chart(document.getElementById('rev'),{...opts('Revenue (cumulative)'),data:{labels,datasets:[
-      {label:'Actual',data:${JSON.stringify(series.revActual)},borderColor:'#4f9dff',backgroundColor:'transparent',pointRadius:0,borderWidth:2},
-      {label:'Target pace',data:${JSON.stringify(series.revTarget)},borderColor:'#5b6675',borderDash:[6,4],pointRadius:0,borderWidth:1.5}]}});
+      {data:${JSON.stringify(series.revActual)},borderColor:'#4f9dff',backgroundColor:'transparent',pointRadius:0,borderWidth:2}]}});
     new Chart(document.getElementById('vol'),{...opts('Volume (cumulative)'),data:{labels,datasets:[
-      {label:'Actual',data:${JSON.stringify(series.volActual)},borderColor:'#34d399',backgroundColor:'transparent',pointRadius:0,borderWidth:2},
-      {label:'Target pace',data:${JSON.stringify(series.volTarget)},borderColor:'#5b6675',borderDash:[6,4],pointRadius:0,borderWidth:1.5}]}});
+      {data:${JSON.stringify(series.volActual)},borderColor:'#34d399',backgroundColor:'transparent',pointRadius:0,borderWidth:2}]}});
   </script></body></html>`;
 }
 
@@ -179,20 +148,19 @@ async function postToSlack(png, series) {
     channel_id: channel,
     file: png,
     filename: `ytd-revenue-volume-${summary.asOf}.png`,
-    title: `YTD Revenue & Volume vs Target — as of ${summary.asOf}`,
+    title: `YTD Revenue & Volume — as of ${summary.asOf}`,
     initial_comment:
-      `*YTD vs target* (as of ${summary.asOf})\n` +
-      `• Revenue: ${fmtUsd(summary.revenue.ytd)} — *${summary.revenue.pct.toFixed(1)}%* of ${fmtUsd(summary.revenue.annual)}\n` +
-      `• Volume: ${fmtUsd(summary.volume.ytd)} — *${summary.volume.pct.toFixed(1)}%* of ${fmtUsd(summary.volume.annual)}`,
+      `*YTD actuals* (as of ${summary.asOf})\n` +
+      `• Revenue: ${fmtUsd(summary.revenue.ytd)}\n` +
+      `• Volume: ${fmtUsd(summary.volume.ytd)}`,
   });
 }
 
 async function main() {
-  const targets = JSON.parse(await readFile(join(__dirname, "targets.json"), "utf8"));
   const daily = await fetchDaily();
   if (!daily.length) throw new Error("Query returned no rows");
-  const series = buildSeries(daily, targets);
-  const html = await buildHtml(series, targets);
+  const series = buildSeries(daily);
+  const html = await buildHtml(series);
   const png = await renderPng(html);
 
   if (DRY_RUN) {
