@@ -31,10 +31,11 @@ Merchant escrow addresses come from the merchant info CSV (dim_merchant_info). A
 
 Classification priority for **outflows** from the cycling wallet:
 1. If `To` == DISPERSE_CONTRACT → **J5d** (Disperse Settlement): Dr 2040 Merchant Funds Payable / Cr 1175 Cycling Wallet
-2. If `To` is in merchant escrow addresses AND tx_hash in settlement line items → **J5** (Direct Settlement): Dr 2040 / Cr 1175
-3. If `To` is in merchant escrow addresses AND tx_hash NOT in settlement line items → **REF** (Refund/Payout Top-up): Dr 2041 Payout Liability / Cr 1175
-4. If `To` is a known direct merchant settlement wallet (not escrow, but in settlement records) → **J5** Dr 2040 / Cr 1175
-5. Anything else unclassified → flag for manual review
+2. If tx_hash is in settlement line items → **J5** (Settlement): Dr 2040 Merchant Funds Payable / Cr 1175 Cycling Wallet. This applies regardless of whether `To` is an escrow address, a direct merchant wallet, or any other address — the settlement report is authoritative.
+3. If `To` is in merchant escrow addresses AND tx_hash NOT in settlement line items → **REF** (Refund/Payout Top-up): Dr 2041 Payout Liability / Cr 1175. These are small returns that didn't generate a settlement record — failed payouts or refunds, not merchant settlements.
+4. Anything else unclassified → flag for manual review
+
+**Key rule**: the tx_hash join against settlement records is the primary classifier for all escrow outflows. A return to stake is only a REF (reduction in payout liability) if there is no matching settlement record. If it appears in the settlement report, it is a J5 settlement regardless of the destination address type.
 
 Classification for **inflows** to the cycling wallet:
 - From escrow addresses → **J4** (Escrow Funding): Dr 1175 Cycling Wallet / Cr 2041 Payout Liability
