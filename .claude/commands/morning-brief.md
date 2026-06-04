@@ -1,4 +1,10 @@
+---
+model: claude-sonnet-4-6
+---
+
 You are running Roby's morning brief. Pull everything from the last 48 hours, triage it, and present a clean action feed with drafts ready to send.
+
+> **Always run this skill with `/fast` mode enabled (Sonnet 4.6 high).** Toggle fast mode before invoking if not already active.
 
 ## Step 1 — Fetch in parallel
 
