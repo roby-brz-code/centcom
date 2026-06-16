@@ -37,6 +37,36 @@ export function cadenceLabel(c: Cadence): string {
   return { daily: "Daily", weekly: "Weekly", monthly: "Monthly", quarterly: "Quarterly" }[c]
 }
 
+// A key identifying the current cadence period, so "due" re-arms each period
+// (daily → resets each day, weekly → each week, etc.).
+export function periodKey(cadence: Cadence, d: Date): string {
+  const y = d.getFullYear()
+  switch (cadence) {
+    case "daily":
+      return `${y}-${d.getMonth() + 1}-${d.getDate()}`
+    case "weekly": {
+      const sinceMonday = (d.getDay() + 6) % 7
+      const monday = new Date(y, d.getMonth(), d.getDate() - sinceMonday)
+      return `${monday.getFullYear()}-${monday.getMonth() + 1}-${monday.getDate()}`
+    }
+    case "monthly":
+      return `${y}-${d.getMonth() + 1}`
+    case "quarterly":
+      return `${y}-Q${Math.floor(d.getMonth() / 3) + 1}`
+  }
+}
+
+// A recurring skill is due if it hasn't been run within the current period.
+export function isRecurringDue(
+  skill: Skill,
+  lastDoneAt: number | undefined,
+  now: Date = new Date(),
+): boolean {
+  if (!skill.cadence) return false
+  if (!lastDoneAt) return true
+  return periodKey(skill.cadence, new Date(lastDoneAt)) !== periodKey(skill.cadence, now)
+}
+
 export interface Agent {
   id: AgentId
   name: string

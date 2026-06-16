@@ -11,11 +11,11 @@ import {
   charPalette,
   CHAR,
   drawSprite,
+  isRecurringDue,
   type PropType,
-  type Skill,
-  type SkillRun,
 } from "@/app/lib/office"
 import { useDismissed } from "../hooks/useDismissed"
+import { useRuns } from "../hooks/useRuns"
 import AgentPanel from "./AgentPanel"
 
 // ---------------------------------------------------------------------------
@@ -111,34 +111,22 @@ export default function OfficeScene() {
   const anyOpen = selectedId !== null || standupOpen
   const selectedAgent = selectedId ? AGENT_BY_ID[selectedId] : null
 
-  // Skill runs — session state for now; a run goes running → done with output.
-  const [runs, setRuns] = useState<SkillRun[]>([])
-
-  const runSkill = (agentId: AgentId, skill: Skill) => {
-    const run: SkillRun = {
-      id: Date.now() + Math.random(),
-      agentId,
-      skillId: skill.id,
-      label: skill.label,
-      at: Date.now(),
-      status: "running",
-    }
-    setRuns((r) => [run, ...r])
-    setTimeout(() => {
-      setRuns((r) =>
-        r.map((x) => (x.id === run.id ? { ...x, status: "done", at: Date.now(), output: skill.sample } : x)),
-      )
-    }, 850)
-  }
+  // Skill runs — persisted across sessions; "due" is cadence-aware.
+  const { runs, runSkill } = useRuns()
 
   // Chief-of-Staff orchestrator data: dispatch summary + floor-wide recurring due.
-  const doneSkillIds = useMemo(
-    () => new Set(runs.filter((r) => r.status === "done").map((r) => r.skillId)),
-    [runs],
-  )
+  const lastDoneAt = useMemo(() => {
+    const m = new Map<string, number>()
+    for (const r of runs) if (r.status === "done" && !m.has(r.skillId)) m.set(r.skillId, r.at)
+    return m
+  }, [runs])
   const recurringDue = useMemo(
-    () => AGENTS.reduce((n, a) => n + a.skills.filter((s) => s.cadence && !doneSkillIds.has(s.id)).length, 0),
-    [doneSkillIds],
+    () =>
+      AGENTS.reduce(
+        (n, a) => n + a.skills.filter((s) => s.cadence && isRecurringDue(s, lastDoneAt.get(s.id))).length,
+        0,
+      ),
+    [lastDoneAt],
   )
   const routes = useMemo(
     () =>

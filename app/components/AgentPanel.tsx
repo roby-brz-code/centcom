@@ -1,7 +1,7 @@
 "use client"
 
 import type { ActionItem, AgentId, FYIItem } from "@/types/brief"
-import { type Agent, type Skill, type SkillRun, cadenceLabel } from "@/app/lib/office"
+import { type Agent, type Skill, type SkillRun, cadenceLabel, isRecurringDue } from "@/app/lib/office"
 import ActionCard from "./ActionCard"
 import Portrait from "./Portrait"
 
@@ -15,15 +15,29 @@ function SectionHead({ title, count }: { title: string; count: number }) {
   )
 }
 
-function clock(at: number) {
-  return new Date(at).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })
+function when(at: number) {
+  const d = new Date(at)
+  const sameDay = d.toDateString() === new Date().toDateString()
+  return sameDay
+    ? d.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })
+    : d.toLocaleDateString("en-GB", { day: "numeric", month: "short" })
 }
 
 // One runnable skill: label, cadence/due state, a Run button, and the latest
-// run's output inline.
-function SkillRow({ skill, run, onRun }: { skill: Skill; run?: SkillRun; onRun: () => void }) {
-  const running = run?.status === "running"
-  const done = run?.status === "done"
+// completed run's output inline.
+function SkillRow({
+  skill,
+  lastDone,
+  running,
+  due,
+  onRun,
+}: {
+  skill: Skill
+  lastDone?: SkillRun
+  running: boolean
+  due: boolean
+  onRun: () => void
+}) {
   return (
     <div className="py-3 border-b border-rule-soft">
       <div className="flex items-baseline gap-2">
@@ -31,12 +45,8 @@ function SkillRow({ skill, run, onRun }: { skill: Skill; run?: SkillRun; onRun: 
           {skill.label}
         </span>
         {skill.cadence && <span className="label text-ink-faint">{cadenceLabel(skill.cadence)}</span>}
-        {skill.cadence &&
-          (done ? (
-            <span className="label text-ink-faint">· ran {clock(run!.at)}</span>
-          ) : (
-            <span className="label text-accent">· due</span>
-          ))}
+        {skill.cadence && due && <span className="label text-accent">· due</span>}
+        {lastDone && !due && <span className="label text-ink-faint">· ran {when(lastDone.at)}</span>}
         <button
           onClick={onRun}
           disabled={running}
@@ -46,9 +56,9 @@ function SkillRow({ skill, run, onRun }: { skill: Skill; run?: SkillRun; onRun: 
         </button>
       </div>
       <p className="font-body text-ink-soft text-[0.9rem] leading-snug mt-0.5">{skill.summary}</p>
-      {done && run!.output && (
+      {lastDone?.output && (
         <p className="font-body text-ink text-[0.9rem] leading-snug mt-2 border-l-2 border-accent/50 pl-3">
-          {run!.output}
+          {lastDone.output}
         </p>
       )}
     </div>
@@ -85,7 +95,9 @@ export default function AgentPanel({
   const normal = actions.filter((a) => !a.urgent)
   const recurring = agent.skills.filter((s) => s.cadence)
   const onDemand = agent.skills.filter((s) => !s.cadence)
-  const latestRun = (skillId: string) => runs.find((r) => r.skillId === skillId)
+  const now = new Date()
+  const lastDoneOf = (skillId: string) => runs.find((r) => r.skillId === skillId && r.status === "done")
+  const isRunning = (skillId: string) => runs.some((r) => r.skillId === skillId && r.status === "running")
 
   const greeting = actions.length
     ? `${urgent.length ? `${urgent.length} urgent · ` : ""}${actions.length} in your tray.`
@@ -213,9 +225,19 @@ export default function AgentPanel({
           {recurring.length > 0 && (
             <section>
               <SectionHead title="Recurring" count={recurring.length} />
-              {recurring.map((skill) => (
-                <SkillRow key={skill.id} skill={skill} run={latestRun(skill.id)} onRun={() => onRunSkill(skill)} />
-              ))}
+              {recurring.map((skill) => {
+                const lastDone = lastDoneOf(skill.id)
+                return (
+                  <SkillRow
+                    key={skill.id}
+                    skill={skill}
+                    lastDone={lastDone}
+                    running={isRunning(skill.id)}
+                    due={isRecurringDue(skill, lastDone?.at, now)}
+                    onRun={() => onRunSkill(skill)}
+                  />
+                )
+              })}
             </section>
           )}
 
@@ -223,9 +245,19 @@ export default function AgentPanel({
           {onDemand.length > 0 && (
             <section>
               <SectionHead title="Skills" count={onDemand.length} />
-              {onDemand.map((skill) => (
-                <SkillRow key={skill.id} skill={skill} run={latestRun(skill.id)} onRun={() => onRunSkill(skill)} />
-              ))}
+              {onDemand.map((skill) => {
+                const lastDone = lastDoneOf(skill.id)
+                return (
+                  <SkillRow
+                    key={skill.id}
+                    skill={skill}
+                    lastDone={lastDone}
+                    running={isRunning(skill.id)}
+                    due={false}
+                    onRun={() => onRunSkill(skill)}
+                  />
+                )
+              })}
             </section>
           )}
         </div>
