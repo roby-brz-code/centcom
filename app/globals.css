@@ -48,3 +48,8 @@ body {
   letter-spacing: 0.12em;
   font-size: 0.6875rem;
 }
+
+/* Crisp upscaling for the pixel-art office canvas */
+.pixelated {
+  image-rendering: pixelated;
+}
