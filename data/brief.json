@@ -5,6 +5,7 @@
     {
       "id": 1,
       "source": "email",
+      "owner": "accounting",
       "sender": "Numeral Support",
       "subject": "Immediate Action Required: Incorrect State Tax Portal Credentials",
       "preview": "Hi Breeze Labs Inc, To avoid late filings Numeral requires working login credentials for the following tax portals: Idaho, Minnesota, Kentucky, Alabama, New Jersey",
@@ -18,6 +19,7 @@
     {
       "id": 2,
       "source": "email",
+      "owner": "accounting",
       "sender": "Millie (Beamo) · Mercury",
       "subject": "Third Party Audit Request — authorization needed",
       "preview": "Adding our finance operations manager here who is helping out with the audit.",
@@ -31,6 +33,7 @@
     {
       "id": 3,
       "source": "email",
+      "owner": "accounting",
       "sender": "Bill.com",
       "subject": "To-do list for Breeze Labs Inc — bills to approve",
       "preview": "Here's a list of the things that need attention. Approve these bills: Vendor Amount Due Date Invoice # Fidelifacts $2500.00 01/10/26 455639",
@@ -43,6 +46,7 @@
     {
       "id": 4,
       "source": "email",
+      "owner": "accounting",
       "sender": "Dante Tosetti",
       "subject": "Breeze Preliminary Audit Proposal — follow-up",
       "preview": "Bryan and Robert, I hope all is well. I understand if you are still syncing, but I wanted to touch base.",
@@ -57,6 +61,7 @@
     {
       "id": 5,
       "source": "slack",
+      "owner": "chief",
       "sender": "Dom",
       "subject": "Head of Finance — agency candidate profiles",
       "preview": "Hey I fwd you an email from an agency im working with. Can you take a look and see what profiles interest you, only one really did for me.",
@@ -71,6 +76,7 @@
     {
       "id": 6,
       "source": "email",
+      "owner": "settlement",
       "sender": "Steven Chung · Checkout.com",
       "subject": "Periodic Credit Review — financial documents overdue",
       "preview": "Hi Steven, We're in the process of finalizing our responses. Is there a secure portal we should be using to upload sensitive materials",
@@ -85,6 +91,7 @@
     {
       "id": 7,
       "source": "email",
+      "owner": "accounting",
       "sender": "Ramp",
       "subject": "4 reimbursements to review",
       "preview": "You can approve or reject these reimbursements from your Ramp dashboard",
@@ -97,6 +104,7 @@
     {
       "id": 8,
       "source": "email",
+      "owner": "accounting",
       "sender": "WeWork (via Jasmine)",
       "subject": "Outstanding WeWork balances — 408 Broadway & 33 Irving Pl",
       "preview": "Hello Breeze Labs Inc, We are reaching out because our records show that your invoice balance has not been settled.",
@@ -110,6 +118,7 @@
     {
       "id": 9,
       "source": "email",
+      "owner": "treasury",
       "sender": "Abhi Raghunathan",
       "subject": "AUS counsel invoice approved — May [ASH-AUS.FID31810213]",
       "preview": "I've reviewed and this is approved for payment (It's for our AUS counsel)",
@@ -123,6 +132,7 @@
     {
       "id": 10,
       "source": "email",
+      "owner": "chief",
       "sender": "PP&Co · Yiyi Wu",
       "subject": "VISA support & FICA exemptions — Rob's status needed",
       "preview": "I do not, but yes, Rob is a non-resident alien. Just wanted to get more information — Does Rob live in the US or does he have a visa?",
@@ -136,6 +146,7 @@
     {
       "id": 11,
       "source": "email",
+      "owner": "accounting",
       "sender": "Ramp",
       "subject": "Doordash $107.47 transaction needs a memo and receipt",
       "preview": "Action required Reply to this email with your memo and receipt $107.47 at Doordash 06/04/26",
@@ -150,6 +161,7 @@
   "fyis": [
     {
       "sender": "SVB / First Citizens",
+      "owner": "treasury",
       "summary": "5 payments processed (Division 1, Gateway Guardian, LBV Social, Emberfund, PROP Account) + 5 payments scheduled",
       "time": "9:09–9:13am",
       "source": "email",
@@ -157,6 +169,7 @@
     },
     {
       "sender": "Meredith Grife",
+      "owner": "chief",
       "summary": "Philip Send-off updated to Thu 11 Jun at 6:15pm — not tonight",
       "time": "4:18pm",
       "source": "email",
@@ -164,6 +177,7 @@
     },
     {
       "sender": "Nonco",
+      "owner": "treasury",
       "summary": "ETH deposit + 2x USDC withdrawals (7M + 500k) processed",
       "time": "8:29–11:37pm",
       "source": "email",
@@ -171,6 +185,7 @@
     },
     {
       "sender": "Wells Fargo",
+      "owner": "treasury",
       "summary": "Wire successful — beneficiary copy received",
       "time": "4:08pm",
       "source": "email",
@@ -178,6 +193,7 @@
     },
     {
       "sender": "Worldpay",
+      "owner": "settlement",
       "summary": "IC++ invoice 437577906 + MI report for PO4091318921",
       "time": "3:41pm",
       "source": "email",
@@ -185,6 +201,7 @@
     },
     {
       "sender": "State Tax Portals",
+      "owner": "accounting",
       "summary": "New device logins on CO and MS portals — Numeral filing activity",
       "time": "7:35am",
       "source": "email",
@@ -192,6 +209,7 @@
     },
     {
       "sender": "Amazon Business",
+      "owner": "fpa",
       "summary": "May spend summary — total for Breeze org",
       "time": "10:14pm",
       "source": "email",
@@ -199,6 +217,7 @@
     },
     {
       "sender": "Velonix Ltd (Ahmet Kaya)",
+      "owner": "settlement",
       "summary": "Thank you for setting up settlement — already handled yesterday",
       "time": "12:17pm",
       "source": "email",
@@ -206,6 +225,7 @@
     },
     {
       "sender": "Steph Dang + Guideline",
+      "owner": "chief",
       "summary": "401(k) plan admin tasks completed — Guideline confirmed",
       "time": "5:15pm",
       "source": "email",
@@ -213,6 +233,7 @@
     },
     {
       "sender": "Marty Wasserman",
+      "owner": "fpa",
       "summary": "SaaS inventory spreadsheet shared for review — saas-inventory-for-roby-2026-06-05",
       "time": "2:42am",
       "source": "slack",
@@ -220,6 +241,7 @@
     },
     {
       "sender": "Alain Glanzman",
+      "owner": "accounting",
       "summary": "Bridge YE balance / audit confirmation — Alain is pinging his contact, monitoring",
       "time": "12:02pm",
       "source": "slack",
@@ -227,6 +249,7 @@
     },
     {
       "sender": "Michael Kim",
+      "owner": "settlement",
       "summary": "Accepted Weekly Recon Sync invite",
       "time": "6:14pm",
       "source": "email",
@@ -234,6 +257,7 @@
     },
     {
       "sender": "Meredith Grife",
+      "owner": "fpa",
       "summary": "Sales Dashboard Office Hours invite — Fri 12 Jun 10–10:30am ET",
       "time": "2:28pm",
       "source": "email",

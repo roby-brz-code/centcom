@@ -1,16 +1,28 @@
 "use client"
 
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
 import Link from "next/link"
+import briefData from "@/data/brief.json"
+import type { AgentId, Brief } from "@/types/brief"
+import {
+  AGENTS,
+  AGENT_BY_ID,
+  bucketByAgent,
+  charPalette,
+  CHAR,
+  drawSprite,
+  type PropType,
+} from "@/app/lib/office"
+import { useDismissed } from "../hooks/useDismissed"
+import AgentPanel from "./AgentPanel"
 
 // ---------------------------------------------------------------------------
-// The Office — pixel-art RPG shell.
+// The Office — pixel-art RPG view over the live Morning Brief.
 //
-// Smallest-shell first: a walkable top-down office where each desk is a finance
-// agent. Move with arrow keys / WASD, walk up + press E (or click a desk) to
-// talk. Processes are previews for now; the weekly standup pulls seeded lines.
-// Hand-rolled canvas (no game engine) so it stays dependency-free; we can
-// graduate to a real tilemap engine when we expand.
+// Walk the floor (WASD / arrows), then click a desk or press E to open that
+// agent's tray. The standup is Margo giving the brief: each desk reports the
+// items it actually owns. Dismissals here sync with the Morning Brief.
+// Hand-rolled canvas (no game engine) so it stays dependency-free.
 // ---------------------------------------------------------------------------
 
 const TS = 16 // tile size in logical pixels
@@ -31,186 +43,7 @@ const SOLIDS: [number, number, number, number][] = [
   [128, 96, 64, 32], // standup table
 ]
 
-type PropType = "chart" | "vault" | "ledger" | "terminal" | "bell"
-type ProcAction = "preview" | "standup" | "brief"
-interface Proc { label: string; action: ProcAction }
-interface Agent {
-  id: string
-  name: string
-  role: string
-  blurb: string
-  shirt: string
-  tile: [number, number] // tile the NPC stands on
-  desk: [number, number, number] // [tx, ty, widthInTiles]
-  propTile: [number, number]
-  prop: PropType
-  phase: number // idle-bob offset
-  hasFlag?: boolean // shows a 💬 "I have something for you" bubble
-  standupLine: string
-  processes: Proc[]
-}
-
-const preview = (labels: string[]): Proc[] =>
-  labels.map((label) => ({ label, action: "preview" as const }))
-
-const AGENTS: Agent[] = [
-  {
-    id: "fpa",
-    name: "Fern",
-    role: "FP&A Manager",
-    blurb: "Runs the numbers — forecast, burn, and where the money's going.",
-    shirt: "#3d6b6b",
-    tile: [3, 4],
-    desk: [2, 2, 3],
-    propTile: [3, 2],
-    prop: "chart",
-    phase: 0,
-    standupLine:
-      "Marty's SaaS inventory is in — I can flag duplicate tools before renewals.",
-    processes: preview([
-      "Refresh the forecast",
-      "Budget vs actual variance",
-      "Burn & runway snapshot",
-      "SaaS spend sweep",
-      "Board metrics pack",
-    ]),
-  },
-  {
-    id: "treasury",
-    name: "Theo",
-    role: "Treasurer",
-    blurb: "Watches the cash — banks, wires, and settlement liquidity.",
-    shirt: "#4f7a4a",
-    tile: [16, 4],
-    desk: [15, 2, 3],
-    propTile: [16, 2],
-    prop: "vault",
-    phase: 1.1,
-    hasFlag: true,
-    standupLine:
-      "$7M + 500k USDC moved via Nonco yesterday — confirming settlement and refreshing the cash position.",
-    processes: preview([
-      "Cash position across banks",
-      "Prep a wire / sweep",
-      "Crypto settlement liquidity",
-      "Runway alarm",
-      "FX exposure",
-    ]),
-  },
-  {
-    id: "accounting",
-    name: "Ada",
-    role: "Accountant",
-    blurb: "Keeps the books clean — close, tax, audits, and bills.",
-    shirt: "#6b4d8a",
-    tile: [3, 9],
-    desk: [2, 10, 3],
-    propTile: [3, 10],
-    prop: "ledger",
-    phase: 2.0,
-    hasFlag: true,
-    standupLine:
-      "Dante's BSA/AML letter is 14 days overdue and Numeral still can't file 5 states — both need a nudge.",
-    processes: preview([
-      "Month-end close checklist",
-      "Audit tracker",
-      "Tax filing status",
-      "Approve bills",
-      "Reconciliations",
-    ]),
-  },
-  {
-    id: "settlement",
-    name: "Sol",
-    role: "Settlement FinOps",
-    blurb: "Owns settlement — payouts, processor recon, and breaks.",
-    shirt: "#b3412a",
-    tile: [16, 9],
-    desk: [15, 10, 3],
-    propTile: [16, 10],
-    prop: "terminal",
-    phase: 3.0,
-    standupLine:
-      "Worldpay IC++ invoice is in for recon, and there's one settlement break to clear.",
-    processes: preview([
-      "Run settlement",
-      "Processor recon",
-      "Payout & break monitor",
-      "Chargeback watch",
-      "Reserve tracking",
-    ]),
-  },
-  {
-    id: "chief",
-    name: "Margo",
-    role: "Chief of Staff",
-    blurb: "Keeps the floor moving — briefs you and runs the standup.",
-    shirt: "#b08a3e",
-    tile: [9, 10],
-    desk: [8, 11, 4],
-    propTile: [9, 11],
-    prop: "bell",
-    phase: 0.6,
-    hasFlag: true,
-    standupLine:
-      "Three approvals are waiting in Bill.com and Ramp — I'll tee them up for you.",
-    processes: [
-      { label: "Open the Morning Brief", action: "brief" },
-      { label: "Convene weekly standup", action: "standup" },
-      { label: "What needs me today?", action: "preview" },
-    ],
-  },
-]
-
-// 12×14 humanoid; palette-swapped per agent. '.' = transparent.
-const CHAR = [
-  "....hhhh....",
-  "..hhhhhhhh..",
-  ".hhhhhhhhhh.",
-  ".hffffffffh.",
-  ".ffffffffff.",
-  ".ffeffffeff.",
-  ".ffffffffff.",
-  "..ffffffff..",
-  "...tttttt...",
-  ".tttttttttt.",
-  ".tttttttttt.",
-  "..nttttttn..",
-  "...ll..ll...",
-  "...ss..ss...",
-]
-
-function charPalette(shirt: string): Record<string, string> {
-  return {
-    h: "#3a2c22", // hair
-    f: "#e7b08a", // skin
-    e: "#1f1c18", // eyes (ink)
-    t: shirt, // shirt
-    n: "#e7b08a", // hands
-    l: "#5c564d", // trousers (ink-soft)
-    s: "#1f1c18", // shoes (ink)
-  }
-}
-
 const PLAYER = charPalette("#3b5a7a") // Roby
-
-function drawSprite(
-  ctx: CanvasRenderingContext2D,
-  rows: string[],
-  palette: Record<string, string>,
-  dx: number,
-  dy: number,
-) {
-  for (let y = 0; y < rows.length; y++) {
-    const row = rows[y]
-    for (let x = 0; x < row.length; x++) {
-      const color = palette[row[x]]
-      if (!color) continue
-      ctx.fillStyle = color
-      ctx.fillRect(dx + x, dy + y, 1, 1)
-    }
-  }
-}
 
 function drawDesk(ctx: CanvasRenderingContext2D, tx: number, ty: number, w: number) {
   const x = tx * TS
@@ -250,21 +83,31 @@ function drawProp(ctx: CanvasRenderingContext2D, type: PropType, tx: number, ty:
 }
 
 export default function OfficeScene() {
+  const brief = briefData as Brief
+  const { dismissedIds, dismiss } = useDismissed(brief.generatedAt)
+  const buckets = useMemo(() => bucketByAgent(brief, dismissedIds), [brief, dismissedIds])
+  const totals = useMemo(() => {
+    const active = brief.actions.filter((a) => !dismissedIds.includes(a.id))
+    return {
+      urgent: active.filter((a) => a.urgent).length,
+      active: active.length,
+      fyis: brief.fyis.length,
+    }
+  }, [brief, dismissedIds])
+
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
-  const portraitRef = useRef<HTMLCanvasElement | null>(null)
   const playerRef = useRef({ x: 80, y: 112 })
   const keysRef = useRef<Set<string>>(new Set())
   const rafRef = useRef(0)
-  const nearestRef = useRef<string | null>(null)
+  const nearestRef = useRef<AgentId | null>(null)
   const openRef = useRef(false)
 
-  const [nearestId, setNearestId] = useState<string | null>(null)
-  const [dialogueId, setDialogueId] = useState<string | null>(null)
+  const [nearestId, setNearestId] = useState<AgentId | null>(null)
+  const [selectedId, setSelectedId] = useState<AgentId | null>(null)
   const [standupOpen, setStandupOpen] = useState(false)
-  const [previewLine, setPreviewLine] = useState<string | null>(null)
 
-  const anyOpen = dialogueId !== null || standupOpen
-  const dialogueAgent = AGENTS.find((a) => a.id === dialogueId) ?? null
+  const anyOpen = selectedId !== null || standupOpen
+  const selectedAgent = selectedId ? AGENT_BY_ID[selectedId] : null
 
   // Keep the game loop aware of whether an overlay is capturing input.
   useEffect(() => {
@@ -280,16 +123,10 @@ export default function OfficeScene() {
 
     const MOVE = new Set(["arrowleft", "arrowright", "arrowup", "arrowdown", "w", "a", "s", "d"])
 
-    const openDialogue = (id: string) => {
-      setDialogueId(id)
-      setPreviewLine(null)
-    }
-
-    const hits = (x: number, y: number) => {
-      return SOLIDS.some(
+    const hits = (x: number, y: number) =>
+      SOLIDS.some(
         ([sx, sy, sw, sh]) => x < sx + sw && x + PW > sx && y < sy + sh && y + PH > sy,
       )
-    }
 
     const move = (dx: number, dy: number) => {
       const p = playerRef.current
@@ -301,7 +138,7 @@ export default function OfficeScene() {
       const p = playerRef.current
       const pcx = p.x + PW / 2
       const pcy = p.y + PH / 2
-      let best: string | null = null
+      let best: AgentId | null = null
       let bestD = NEAR
       for (const a of AGENTS) {
         const d = Math.hypot(a.tile[0] * TS + 8 - pcx, a.tile[1] * TS + 8 - pcy)
@@ -388,12 +225,12 @@ export default function OfficeScene() {
     const onKeyDown = (e: KeyboardEvent) => {
       const k = e.key.toLowerCase()
       if (openRef.current) {
-        if (k === "escape") { setDialogueId(null); setStandupOpen(false) }
+        if (k === "escape") { setSelectedId(null); setStandupOpen(false) }
         return
       }
       if (MOVE.has(k) || k === " ") e.preventDefault()
       if (k === "e" || k === "enter" || k === " ") {
-        if (nearestRef.current) openDialogue(nearestRef.current)
+        if (nearestRef.current) setSelectedId(nearestRef.current)
         return
       }
       keysRef.current.add(k)
@@ -412,27 +249,6 @@ export default function OfficeScene() {
     }
   }, [])
 
-  // Portrait inside the dialogue box.
-  useEffect(() => {
-    if (!dialogueAgent) return
-    const c = portraitRef.current
-    if (!c) return
-    const pctx = c.getContext("2d")
-    if (!pctx) return
-    pctx.clearRect(0, 0, c.width, c.height)
-    pctx.imageSmoothingEnabled = false
-    drawSprite(pctx, CHAR, charPalette(dialogueAgent.shirt), 0, 0)
-  }, [dialogueAgent])
-
-  function handleProcess(agent: Agent, proc: Proc) {
-    if (proc.action === "standup") {
-      setDialogueId(null)
-      setStandupOpen(true)
-    } else {
-      setPreviewLine(`▶ ${agent.name} would run “${proc.label}” — wiring up next.`)
-    }
-  }
-
   return (
     <div className="w-full flex flex-col items-center">
       <div className="relative w-full" style={{ maxWidth: 760 }}>
@@ -447,17 +263,21 @@ export default function OfficeScene() {
           {AGENTS.map((a) => {
             const leftPct = ((a.tile[0] * TS + 8) / W) * 100
             const topPct = ((a.tile[1] * TS + 8) / H) * 100
+            const b = buckets[a.id]
             return (
               <button
                 key={a.id}
-                onClick={() => { setDialogueId(a.id); setPreviewLine(null) }}
-                aria-label={`Talk to ${a.name}, ${a.role}`}
+                onClick={() => setSelectedId(a.id)}
+                aria-label={`Open ${a.name}, ${a.role} — ${b.active} to action`}
                 className="group absolute z-10 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center"
                 style={{ left: `${leftPct}%`, top: `${topPct}%`, width: "13%", height: "24%" }}
               >
-                {a.hasFlag && (
-                  <span className="absolute -top-1 text-[11px] leading-none drop-shadow-sm" aria-hidden>
-                    💬
+                {b.active > 0 && (
+                  <span
+                    className="absolute -top-2 right-0 label tabular-nums text-paper rounded-full min-w-[16px] h-[16px] px-1 flex items-center justify-center leading-none"
+                    style={{ background: b.urgent > 0 ? "var(--accent)" : "var(--ink-soft)" }}
+                  >
+                    {b.active}
                   </span>
                 )}
                 {nearestId === a.id && !anyOpen && (
@@ -476,7 +296,7 @@ export default function OfficeScene() {
 
         <div className="mt-3 flex items-center justify-between gap-3">
           <span className="label text-ink-faint">
-            Arrow keys / WASD to move · E or click a desk to talk
+            Arrow keys / WASD to move · E or click a desk
           </span>
           <button
             onClick={() => setStandupOpen(true)}
@@ -487,61 +307,15 @@ export default function OfficeScene() {
         </div>
       </div>
 
-      {dialogueAgent && (
-        <div className="fixed inset-x-0 bottom-0 z-30 flex justify-center px-4 pb-4">
-          <div
-            className="w-full max-w-[760px] bg-paper-raised p-4 relative"
-            style={{ boxShadow: "0 0 0 3px var(--paper-raised), 0 0 0 6px var(--ink), 0 12px 30px rgba(0,0,0,.18)" }}
-          >
-            <button
-              onClick={() => setDialogueId(null)}
-              aria-label="Close"
-              className="absolute top-2 right-3 label text-ink-faint hover:text-ink transition-colors"
-            >
-              Esc ✕
-            </button>
-            <div className="flex gap-4">
-              <canvas
-                ref={portraitRef}
-                width={12}
-                height={14}
-                className="pixelated shrink-0 self-start"
-                style={{ width: 60, height: 70, border: "2px solid var(--ink)", background: "var(--accent-soft)" }}
-              />
-              <div className="min-w-0 flex-1">
-                <div className="flex items-baseline gap-2.5">
-                  <span className="font-display text-ink text-xl" style={{ fontWeight: 600 }}>
-                    {dialogueAgent.name}
-                  </span>
-                  <span className="label text-ink-faint">{dialogueAgent.role}</span>
-                </div>
-                <p className="font-body italic text-ink-soft mt-0.5 leading-snug">{dialogueAgent.blurb}</p>
-                <div className="mt-3 flex flex-wrap gap-2">
-                  {dialogueAgent.processes.map((proc) =>
-                    proc.action === "brief" ? (
-                      <Link
-                        key={proc.label}
-                        href="/"
-                        className="label border border-rule hover:border-ink hover:bg-paper px-2 py-1 rounded-sm text-ink transition-colors"
-                      >
-                        {proc.label} →
-                      </Link>
-                    ) : (
-                      <button
-                        key={proc.label}
-                        onClick={() => handleProcess(dialogueAgent, proc)}
-                        className="label border border-rule hover:border-ink hover:bg-paper px-2 py-1 rounded-sm text-ink transition-colors"
-                      >
-                        {proc.label}
-                      </button>
-                    ),
-                  )}
-                </div>
-                {previewLine && <p className="label text-accent mt-3">{previewLine}</p>}
-              </div>
-            </div>
-          </div>
-        </div>
+      {selectedAgent && (
+        <AgentPanel
+          agent={selectedAgent}
+          actions={buckets[selectedAgent.id].actions}
+          fyis={buckets[selectedAgent.id].fyis}
+          onDismiss={dismiss}
+          onClose={() => setSelectedId(null)}
+          onRunStandup={() => { setSelectedId(null); setStandupOpen(true) }}
+        />
       )}
 
       {standupOpen && (
@@ -551,7 +325,7 @@ export default function OfficeScene() {
         >
           <div
             onClick={(e) => e.stopPropagation()}
-            className="w-full max-w-[560px] bg-paper-raised p-6 relative"
+            className="w-full max-w-[580px] max-h-[85vh] overflow-y-auto bg-paper-raised p-6 relative"
             style={{ boxShadow: "0 0 0 3px var(--paper-raised), 0 0 0 6px var(--ink)" }}
           >
             <button
@@ -561,28 +335,59 @@ export default function OfficeScene() {
             >
               Esc ✕
             </button>
-            <div className="label text-ink-faint">Monday · weekly standup</div>
+            <div className="label text-ink-faint">{brief.date} · weekly standup</div>
             <h2 className="font-display text-ink text-2xl" style={{ fontWeight: 600 }}>
               Around the table
             </h2>
-            <div className="mt-2 border-t-2 border-ink" />
-            <div className="mt-0.5 border-t border-ink" />
-            <ul className="mt-4 space-y-3">
-              {AGENTS.map((a) => (
-                <li key={a.id} className="flex gap-3">
-                  <span className="mt-1.5 h-3 w-3 rounded-full shrink-0" style={{ background: a.shirt }} />
-                  <div className="min-w-0">
-                    <div className="label text-ink">
-                      {a.name} · <span className="text-ink-faint">{a.role}</span>
-                    </div>
-                    <p className="font-body text-ink-soft text-[0.95rem] leading-snug">{a.standupLine}</p>
-                  </div>
-                </li>
-              ))}
-            </ul>
-            <p className="label text-ink-faint mt-5 leading-relaxed">
-              Seeded preview — the live agenda wires up from your brief next.
+            <p className="font-body italic text-ink-soft mt-1 leading-snug">
+              Margo gives the brief:{" "}
+              <span className="not-italic text-ink">{totals.urgent} urgent</span> ·{" "}
+              {totals.active} to action · {totals.fyis} noted across the floor.
             </p>
+            <div className="mt-3 border-t-2 border-ink" />
+            <div className="mt-0.5 border-t border-ink" />
+
+            <ul className="mt-3">
+              {AGENTS.map((a) => {
+                const b = buckets[a.id]
+                const count =
+                  b.active > 0
+                    ? `${b.urgent > 0 ? `${b.urgent} urgent · ` : ""}${b.active} to action`
+                    : b.fyis.length > 0
+                      ? `${b.fyis.length} noted`
+                      : "clear"
+                return (
+                  <li key={a.id}>
+                    <button
+                      onClick={() => { setStandupOpen(false); setSelectedId(a.id) }}
+                      className="group w-full text-left flex gap-3 py-3 border-b border-rule-soft hover:bg-paper transition-colors"
+                    >
+                      <span className="mt-1 h-3 w-3 rounded-full shrink-0" style={{ background: a.shirt }} />
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-baseline gap-2 flex-wrap">
+                          <span className="label text-ink">{a.name}</span>
+                          <span className="label text-ink-faint">{a.role}</span>
+                          <span className={`label ${b.urgent > 0 ? "text-accent" : "text-ink-faint"}`}>· {count}</span>
+                        </div>
+                        <p className="font-body text-ink-soft text-[0.95rem] leading-snug mt-0.5">
+                          {b.leadText}
+                        </p>
+                      </div>
+                      <span className="label text-ink-faint self-center group-hover:text-ink transition-colors">
+                        open →
+                      </span>
+                    </button>
+                  </li>
+                )
+              })}
+            </ul>
+
+            <Link
+              href="/"
+              className="label text-ink inline-block mt-5 underline decoration-rule decoration-1 underline-offset-2 hover:decoration-ink transition-colors"
+            >
+              Open the full Morning Brief →
+            </Link>
           </div>
         </div>
       )}

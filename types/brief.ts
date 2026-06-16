@@ -1,8 +1,13 @@
 export type Source = "email" | "slack"
 
+// Which desk in The Office owns this item. Set by the morning-brief skill;
+// falls back to keyword routing in app/lib/office.ts when absent.
+export type AgentId = "fpa" | "treasury" | "accounting" | "settlement" | "chief"
+
 export interface ActionItem {
   id: number
   source: Source
+  owner?: AgentId
   sender: string
   subject: string
   preview: string
@@ -19,6 +24,7 @@ export interface ActionItem {
 
 export interface FYIItem {
   sender: string
+  owner?: AgentId
   summary: string
   time: string
   source?: Source
