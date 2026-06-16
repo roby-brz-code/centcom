@@ -20,6 +20,22 @@ export interface Skill {
   summary: string
   sample: string
   cadence?: Cadence
+  reportId?: string // renders a structured report from data/reports.json when run
+}
+
+// A structured report (e.g. the weekly flash), backed by real warehouse data.
+export interface ReportMetric {
+  label: string
+  value: string
+  delta?: string
+  dir?: "up" | "down" | "flat"
+}
+export interface Report {
+  title: string
+  period: string
+  source: string
+  metrics: ReportMetric[]
+  notes: string[]
 }
 
 // One invocation of a skill. Lives in session state for now.
@@ -98,10 +114,10 @@ export const AGENTS: Agent[] = [
     phase: 0,
     keywords: ["forecast", "budget", "burn", "runway", "saas", "spend", "metrics", "board", "dashboard", "amazon", "valuation"],
     skills: [
+      { id: "fpa-flash", label: "Weekly flash report", cadence: "weekly", reportId: "weekly-flash", summary: "Week-over-week TPV, revenue, take rate and order volume — pulled from Nova.", sample: "Weekly flash ready — $3.33M revenue, −3.2% WoW on flat TPV." },
+      { id: "fpa-performance", label: "Performance report", cadence: "monthly", reportId: "performance", summary: "YTD revenue trend, blended take rate, and revenue mix — pulled from Nova.", sample: "Performance report ready — May $15.78M, −10.4% MoM; revenue ~99% sweepstakes." },
       { id: "fpa-runway", label: "Burn & runway snapshot", cadence: "weekly", summary: "Net burn vs plan and months of runway at current spend.", sample: "Net burn ~$420k, just under plan. Runway ≈ 14 months. Two lines above forecast: cloud (+$12k), contractors (+$8k)." },
-      { id: "fpa-variance", label: "Budget vs actual variance", cadence: "monthly", summary: "Compare the month's actuals to budget and flag the movers.", sample: "May: revenue +3% vs budget, opex +6%. Largest variance: SaaS (+$18k). Drafted a note for the board pack." },
       { id: "fpa-saas", label: "SaaS spend sweep", cadence: "monthly", summary: "Inventory SaaS tools and flag duplicates before renewals.", sample: "47 tools, $62k/mo. 6 likely duplicates (2× analytics, 2× e-sign). Est. $9k/mo if consolidated." },
-      { id: "fpa-forecast", label: "Refresh the forecast", summary: "Rebuild the operating forecast from the latest actuals.", sample: "Forecast rebuilt from May actuals. Q3 revenue +4% vs prior model; runway unchanged." },
       { id: "fpa-board", label: "Board metrics pack", cadence: "monthly", summary: "Assemble the monthly metrics pack for review.", sample: "Drafted the pack: ARR, net burn, runway, headcount, top variances. Ready for your review." },
     ],
   },

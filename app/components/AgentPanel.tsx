@@ -1,9 +1,12 @@
 "use client"
 
 import type { ActionItem, AgentId, FYIItem } from "@/types/brief"
-import { type Agent, type Skill, type SkillRun, cadenceLabel, isRecurringDue } from "@/app/lib/office"
+import { type Agent, type Report, type Skill, type SkillRun, cadenceLabel, isRecurringDue } from "@/app/lib/office"
+import reportsData from "@/data/reports.json"
 import ActionCard from "./ActionCard"
 import Portrait from "./Portrait"
+
+const REPORTS = reportsData as unknown as Record<string, Report>
 
 function SectionHead({ title, count }: { title: string; count: number }) {
   return (
@@ -23,19 +26,54 @@ function when(at: number) {
     : d.toLocaleDateString("en-GB", { day: "numeric", month: "short" })
 }
 
+// A structured report (metrics + notes), backed by real warehouse data.
+function ReportView({ report }: { report: Report }) {
+  const deltaColor = (dir?: string) =>
+    dir === "down" ? "text-danger" : dir === "up" ? "text-email" : "text-ink-faint"
+  return (
+    <div className="mt-2 border-l-2 border-accent/50 pl-3">
+      <div className="label text-ink-faint">{report.period}</div>
+      <div className="mt-2 divide-y divide-rule-soft">
+        {report.metrics.map((m, i) => (
+          <div key={i} className="flex items-baseline justify-between gap-3 py-1">
+            <span className="font-body text-ink-soft text-[0.9rem]">{m.label}</span>
+            <span className="flex items-baseline gap-2 flex-shrink-0">
+              <span className="font-display text-ink text-[0.95rem] tabular-nums" style={{ fontWeight: 560 }}>
+                {m.value}
+              </span>
+              {m.delta && <span className={`label ${deltaColor(m.dir)}`}>{m.delta}</span>}
+            </span>
+          </div>
+        ))}
+      </div>
+      <ul className="mt-2.5 space-y-1.5">
+        {report.notes.map((n, i) => (
+          <li key={i} className="font-body text-ink-soft text-[0.88rem] leading-snug flex gap-2">
+            <span className="text-ink-faint flex-shrink-0">·</span>
+            <span>{n}</span>
+          </li>
+        ))}
+      </ul>
+      <div className="label text-ink-faint mt-2">{report.source}</div>
+    </div>
+  )
+}
+
 // One runnable skill: label, cadence/due state, a Run button, and the latest
-// completed run's output inline.
+// completed run's output (a structured report, or text) inline.
 function SkillRow({
   skill,
   lastDone,
   running,
   due,
+  report,
   onRun,
 }: {
   skill: Skill
   lastDone?: SkillRun
   running: boolean
   due: boolean
+  report?: Report
   onRun: () => void
 }) {
   return (
@@ -56,7 +94,8 @@ function SkillRow({
         </button>
       </div>
       <p className="font-body text-ink-soft text-[0.9rem] leading-snug mt-0.5">{skill.summary}</p>
-      {lastDone?.output && (
+      {lastDone && report && <ReportView report={report} />}
+      {lastDone?.output && !report && (
         <p className="font-body text-ink text-[0.9rem] leading-snug mt-2 border-l-2 border-accent/50 pl-3">
           {lastDone.output}
         </p>
@@ -234,6 +273,7 @@ export default function AgentPanel({
                     lastDone={lastDone}
                     running={isRunning(skill.id)}
                     due={isRecurringDue(skill, lastDone?.at, now)}
+                    report={skill.reportId ? REPORTS[skill.reportId] : undefined}
                     onRun={() => onRunSkill(skill)}
                   />
                 )
@@ -254,6 +294,7 @@ export default function AgentPanel({
                     lastDone={lastDone}
                     running={isRunning(skill.id)}
                     due={false}
+                    report={skill.reportId ? REPORTS[skill.reportId] : undefined}
                     onRun={() => onRunSkill(skill)}
                   />
                 )
