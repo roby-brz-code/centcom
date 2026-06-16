@@ -48,9 +48,9 @@ const PLAYER = charPalette("#3b5a7a") // Roby
 function drawDesk(ctx: CanvasRenderingContext2D, tx: number, ty: number, w: number) {
   const x = tx * TS
   const y = ty * TS
-  ctx.fillStyle = "#9c7b4e"
+  ctx.fillStyle = "#aab4c2"
   ctx.fillRect(x, y, w * TS, TS)
-  ctx.fillStyle = "#c2a373"
+  ctx.fillStyle = "#cdd5e0"
   ctx.fillRect(x, y, w * TS, TS - 3)
 }
 
@@ -58,27 +58,27 @@ function drawProp(ctx: CanvasRenderingContext2D, type: PropType, tx: number, ty:
   const x = tx * TS
   const y = ty * TS
   if (type === "chart") {
-    ctx.fillStyle = "#2b2b2b"; ctx.fillRect(x + 3, y + 1, 10, 8)
-    ctx.fillStyle = "#cfe3df"; ctx.fillRect(x + 4, y + 2, 8, 6)
-    ctx.fillStyle = "#3d6b6b"
+    ctx.fillStyle = "#2b3340"; ctx.fillRect(x + 3, y + 1, 10, 8)
+    ctx.fillStyle = "#dbe7f5"; ctx.fillRect(x + 4, y + 2, 8, 6)
+    ctx.fillStyle = "#2f6df0"
     ctx.fillRect(x + 5, y + 6, 1, 2); ctx.fillRect(x + 7, y + 5, 1, 3); ctx.fillRect(x + 9, y + 4, 1, 4)
-    ctx.fillStyle = "#2b2b2b"; ctx.fillRect(x + 7, y + 9, 2, 2)
+    ctx.fillStyle = "#2b3340"; ctx.fillRect(x + 7, y + 9, 2, 2)
   } else if (type === "vault") {
-    ctx.fillStyle = "#6b6b6b"; ctx.fillRect(x + 3, y + 1, 10, 10)
-    ctx.fillStyle = "#4a4a4a"; ctx.fillRect(x + 5, y + 3, 6, 6)
-    ctx.fillStyle = "#c9a227"; ctx.fillRect(x + 7, y + 5, 2, 2)
+    ctx.fillStyle = "#8b95a6"; ctx.fillRect(x + 3, y + 1, 10, 10)
+    ctx.fillStyle = "#6b7689"; ctx.fillRect(x + 5, y + 3, 6, 6)
+    ctx.fillStyle = "#2f6df0"; ctx.fillRect(x + 7, y + 5, 2, 2)
   } else if (type === "ledger") {
-    ctx.fillStyle = "#6b4d8a"; ctx.fillRect(x + 3, y + 3, 10, 7)
-    ctx.fillStyle = "#f6f3ec"; ctx.fillRect(x + 4, y + 4, 8, 5)
-    ctx.fillStyle = "#b3412a"; ctx.fillRect(x + 3, y + 3, 2, 7)
+    ctx.fillStyle = "#7c5cff"; ctx.fillRect(x + 3, y + 3, 10, 7)
+    ctx.fillStyle = "#ffffff"; ctx.fillRect(x + 4, y + 4, 8, 5)
+    ctx.fillStyle = "#2f6df0"; ctx.fillRect(x + 3, y + 3, 2, 7)
   } else if (type === "terminal") {
-    ctx.fillStyle = "#b3412a"; ctx.fillRect(x + 9, y - 1, 2, 5) // a card
-    ctx.fillStyle = "#2b2b2b"; ctx.fillRect(x + 4, y + 2, 8, 8)
-    ctx.fillStyle = "#3d6b6b"; ctx.fillRect(x + 5, y + 3, 6, 3)
-    ctx.fillStyle = "#c9a227"; ctx.fillRect(x + 6, y + 8, 4, 1)
+    ctx.fillStyle = "#f43f7e"; ctx.fillRect(x + 9, y - 1, 2, 5) // a card
+    ctx.fillStyle = "#2b3340"; ctx.fillRect(x + 4, y + 2, 8, 8)
+    ctx.fillStyle = "#2f6df0"; ctx.fillRect(x + 5, y + 3, 6, 3)
+    ctx.fillStyle = "#cdd5e0"; ctx.fillRect(x + 6, y + 8, 4, 1)
   } else if (type === "bell") {
-    ctx.fillStyle = "#8a6e1f"; ctx.fillRect(x + 7, y + 2, 2, 2)
-    ctx.fillStyle = "#c9a227"; ctx.fillRect(x + 5, y + 4, 6, 5); ctx.fillRect(x + 4, y + 9, 8, 1)
+    ctx.fillStyle = "#6b7689"; ctx.fillRect(x + 7, y + 2, 2, 2)
+    ctx.fillStyle = "#c4ccd6"; ctx.fillRect(x + 5, y + 4, 6, 5); ctx.fillRect(x + 4, y + 9, 8, 1)
   }
 }
 
@@ -157,27 +157,27 @@ export default function OfficeScene() {
       // floor
       for (let ty = 0; ty < ROWS; ty++) {
         for (let tx = 0; tx < COLS; tx++) {
-          ctx.fillStyle = (tx + ty) % 2 === 0 ? "#efeadf" : "#e7e0d2"
+          ctx.fillStyle = (tx + ty) % 2 === 0 ? "#eef1f6" : "#e3e8ef"
           ctx.fillRect(tx * TS, ty * TS, TS, TS)
         }
       }
       // standup rug
-      ctx.fillStyle = "#f0e0d8"; ctx.fillRect(116, 86, 88, 54)
+      ctx.fillStyle = "#e6ecf7"; ctx.fillRect(116, 86, 88, 54)
       // walls
-      ctx.fillStyle = "#cdc6b6"
+      ctx.fillStyle = "#d3dae4"
       ctx.fillRect(0, 0, W, TS); ctx.fillRect(0, H - TS, W, TS)
       ctx.fillRect(0, 0, TS, H); ctx.fillRect(W - TS, 0, TS, H)
-      ctx.fillStyle = "#b7af9d"
+      ctx.fillStyle = "#bcc5d3"
       ctx.fillRect(0, TS - 2, W, 2); ctx.fillRect(0, H - TS, W, 2)
       ctx.fillRect(TS - 2, 0, 2, H); ctx.fillRect(W - TS, 0, 2, H)
       // door (decorative)
-      ctx.fillStyle = "#9c7b4e"; ctx.fillRect(9 * TS, H - TS, 2 * TS, TS)
-      ctx.fillStyle = "#6e5636"; ctx.fillRect(9 * TS + 3, H - TS + 3, 2 * TS - 6, TS - 3)
+      ctx.fillStyle = "#aab4c2"; ctx.fillRect(9 * TS, H - TS, 2 * TS, TS)
+      ctx.fillStyle = "#6b7689"; ctx.fillRect(9 * TS + 3, H - TS + 3, 2 * TS - 6, TS - 3)
       // standup table
-      ctx.fillStyle = "#9c7b4e"; ctx.fillRect(128, 96, 64, 32)
-      ctx.fillStyle = "#c2a373"; ctx.fillRect(128, 96, 64, 29)
-      ctx.fillStyle = "#f6f3ec"; ctx.fillRect(140, 104, 10, 8)
-      ctx.fillStyle = "#b3412a"; ctx.fillRect(170, 106, 6, 6)
+      ctx.fillStyle = "#b3bdcb"; ctx.fillRect(128, 96, 64, 32)
+      ctx.fillStyle = "#cdd5e0"; ctx.fillRect(128, 96, 64, 29)
+      ctx.fillStyle = "#ffffff"; ctx.fillRect(140, 104, 10, 8)
+      ctx.fillStyle = "#2f6df0"; ctx.fillRect(170, 106, 6, 6)
       // desks + props
       for (const a of AGENTS) {
         drawDesk(ctx, a.desk[0], a.desk[1], a.desk[2])
@@ -275,7 +275,7 @@ export default function OfficeScene() {
                 {b.active > 0 && (
                   <span
                     className="absolute -top-2 right-0 label tabular-nums text-paper rounded-full min-w-[16px] h-[16px] px-1 flex items-center justify-center leading-none"
-                    style={{ background: b.urgent > 0 ? "var(--accent)" : "var(--ink-soft)" }}
+                    style={{ background: b.urgent > 0 ? "var(--danger)" : "var(--ink-soft)" }}
                   >
                     {b.active}
                   </span>
@@ -367,7 +367,7 @@ export default function OfficeScene() {
                         <div className="flex items-baseline gap-2 flex-wrap">
                           <span className="label text-ink">{a.name}</span>
                           <span className="label text-ink-faint">{a.role}</span>
-                          <span className={`label ${b.urgent > 0 ? "text-accent" : "text-ink-faint"}`}>· {count}</span>
+                          <span className={`label ${b.urgent > 0 ? "text-danger" : "text-ink-faint"}`}>· {count}</span>
                         </div>
                         <p className="font-body text-ink-soft text-[0.95rem] leading-snug mt-0.5">
                           {b.leadText}

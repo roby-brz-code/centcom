@@ -49,7 +49,7 @@ export default function ActionCard({
         {/* Index / urgent marker */}
         <div className="w-7 flex-shrink-0 pt-0.5 text-center">
           {item.urgent ? (
-            <span className="inline-block w-2 h-2 rounded-full bg-accent" />
+            <span className="inline-block w-2 h-2 rounded-full bg-danger" />
           ) : (
             <span className="label text-ink-faint tabular-nums">
               {String(index + 1).padStart(2, "0")}
@@ -71,7 +71,7 @@ export default function ActionCard({
             {item.overduedays && (
               <>
                 <span className="w-1 h-1 rounded-full bg-rule" />
-                <span className="label text-accent">{item.overduedays}d waiting</span>
+                <span className="label text-danger">{item.overduedays}d waiting</span>
               </>
             )}
           </div>

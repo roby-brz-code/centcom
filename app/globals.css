@@ -1,18 +1,19 @@
 @import "tailwindcss";
 
 :root {
-  /* Warm paper palette — bright, light, printed feel */
-  --paper: #f6f3ec;
-  --paper-raised: #fffdf8;
-  --ink: #1f1c18;
-  --ink-soft: #5c564d;
-  --ink-faint: #908a7e;
-  --rule: #d9d3c6;
-  --rule-soft: #e8e3d8;
-  --accent: #b3412a;      /* terracotta — urgent */
-  --accent-soft: #f0e0d8;
-  --slack: #6b4d8a;       /* muted plum */
-  --email: #3d6b6b;       /* muted teal */
+  /* Cool slate palette — modern, light, calm */
+  --paper: #f4f6f9;
+  --paper-raised: #ffffff;
+  --ink: #1a2230;
+  --ink-soft: #56607a;
+  --ink-faint: #8a93a6;
+  --rule: #d7dde6;
+  --rule-soft: #e8ecf2;
+  --accent: #2f6df0;      /* brand blue — interactive emphasis */
+  --accent-soft: #e8eef9;
+  --danger: #e5484d;      /* urgent / alert */
+  --slack: #7c5cff;       /* violet */
+  --email: #0ea5b5;       /* cyan-teal */
 }
 
 @theme inline {
@@ -25,6 +26,7 @@
   --color-rule-soft: var(--rule-soft);
   --color-accent: var(--accent);
   --color-accent-soft: var(--accent-soft);
+  --color-danger: var(--danger);
   --color-slack: var(--slack);
   --color-email: var(--email);
   --font-display: var(--font-display);

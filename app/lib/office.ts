@@ -41,7 +41,7 @@ export const AGENTS: Agent[] = [
     role: "FP&A Manager",
     blurb: "Runs the numbers — forecast, burn, and where the money's going.",
     idle: "Models are current — keeping an eye on spend.",
-    shirt: "#3d6b6b",
+    shirt: "#2f6df0",
     tile: [3, 4],
     desk: [2, 2, 3],
     propTile: [3, 2],
@@ -62,7 +62,7 @@ export const AGENTS: Agent[] = [
     role: "Treasurer",
     blurb: "Watches the cash — banks, wires, and settlement liquidity.",
     idle: "Balances look healthy — no moves needed right now.",
-    shirt: "#4f7a4a",
+    shirt: "#0d9488",
     tile: [16, 4],
     desk: [15, 2, 3],
     propTile: [16, 2],
@@ -83,7 +83,7 @@ export const AGENTS: Agent[] = [
     role: "Accountant",
     blurb: "Keeps the books clean — close, tax, audits, and bills.",
     idle: "Books are tidy at the moment.",
-    shirt: "#6b4d8a",
+    shirt: "#7c5cff",
     tile: [3, 9],
     desk: [2, 10, 3],
     propTile: [3, 10],
@@ -104,7 +104,7 @@ export const AGENTS: Agent[] = [
     role: "Settlement FinOps",
     blurb: "Owns settlement — payouts, processor recon, and breaks.",
     idle: "Settlements are clean — nothing breaking.",
-    shirt: "#b3412a",
+    shirt: "#f43f7e",
     tile: [16, 9],
     desk: [15, 10, 3],
     propTile: [16, 10],
@@ -125,7 +125,7 @@ export const AGENTS: Agent[] = [
     role: "Chief of Staff",
     blurb: "Keeps the floor moving — gives the brief and runs the standup.",
     idle: "Floor's calm — nothing needs you this minute.",
-    shirt: "#b08a3e",
+    shirt: "#f59e0b",
     tile: [9, 10],
     desk: [8, 11, 4],
     propTile: [9, 11],
@@ -166,13 +166,13 @@ export const CHAR = [
 
 export function charPalette(shirt: string): Record<string, string> {
   return {
-    h: "#3a2c22", // hair
+    h: "#2f2a28", // hair
     f: "#e7b08a", // skin
-    e: "#1f1c18", // eyes (ink)
+    e: "#1a2230", // eyes (slate)
     t: shirt, // shirt
     n: "#e7b08a", // hands
-    l: "#5c564d", // trousers (ink-soft)
-    s: "#1f1c18", // shoes (ink)
+    l: "#3a4254", // trousers (cool slate)
+    s: "#1a2230", // shoes (slate)
   }
 }
 
