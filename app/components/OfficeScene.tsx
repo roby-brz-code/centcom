@@ -12,6 +12,8 @@ import {
   CHAR,
   drawSprite,
   type PropType,
+  type Skill,
+  type SkillRun,
 } from "@/app/lib/office"
 import { useDismissed } from "../hooks/useDismissed"
 import AgentPanel from "./AgentPanel"
@@ -108,6 +110,48 @@ export default function OfficeScene() {
 
   const anyOpen = selectedId !== null || standupOpen
   const selectedAgent = selectedId ? AGENT_BY_ID[selectedId] : null
+
+  // Skill runs — session state for now; a run goes running → done with output.
+  const [runs, setRuns] = useState<SkillRun[]>([])
+
+  const runSkill = (agentId: AgentId, skill: Skill) => {
+    const run: SkillRun = {
+      id: Date.now() + Math.random(),
+      agentId,
+      skillId: skill.id,
+      label: skill.label,
+      at: Date.now(),
+      status: "running",
+    }
+    setRuns((r) => [run, ...r])
+    setTimeout(() => {
+      setRuns((r) =>
+        r.map((x) => (x.id === run.id ? { ...x, status: "done", at: Date.now(), output: skill.sample } : x)),
+      )
+    }, 850)
+  }
+
+  // Chief-of-Staff orchestrator data: dispatch summary + floor-wide recurring due.
+  const doneSkillIds = useMemo(
+    () => new Set(runs.filter((r) => r.status === "done").map((r) => r.skillId)),
+    [runs],
+  )
+  const recurringDue = useMemo(
+    () => AGENTS.reduce((n, a) => n + a.skills.filter((s) => s.cadence && !doneSkillIds.has(s.id)).length, 0),
+    [doneSkillIds],
+  )
+  const routes = useMemo(
+    () =>
+      AGENTS.map((a) => ({
+        id: a.id,
+        name: a.name,
+        role: a.role,
+        shirt: a.shirt,
+        active: buckets[a.id].active,
+        urgent: buckets[a.id].urgent,
+      })),
+    [buckets],
+  )
 
   // Keep the game loop aware of whether an overlay is capturing input.
   useEffect(() => {
@@ -312,9 +356,15 @@ export default function OfficeScene() {
           agent={selectedAgent}
           actions={buckets[selectedAgent.id].actions}
           fyis={buckets[selectedAgent.id].fyis}
+          runs={runs.filter((r) => r.agentId === selectedAgent.id)}
           onDismiss={dismiss}
+          onRunSkill={(skill) => runSkill(selectedAgent.id, skill)}
           onClose={() => setSelectedId(null)}
-          onRunStandup={() => { setSelectedId(null); setStandupOpen(true) }}
+          chiefView={
+            selectedAgent.id === "chief"
+              ? { routes, recurringDue, onConveneStandup: () => { setSelectedId(null); setStandupOpen(true) } }
+              : undefined
+          }
         />
       )}
 

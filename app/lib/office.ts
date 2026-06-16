@@ -1,18 +1,40 @@
 import type { ActionItem, AgentId, Brief, FYIItem } from "@/types/brief"
 
 // ---------------------------------------------------------------------------
-// The Office roster + the routing that maps brief items onto desks.
+// The Office roster, the skills each desk can run, and the routing that maps
+// brief items onto desks.
 //
 // Single source of truth for who works the floor, their pixel-sprite identity,
-// and how an inbox item finds its owner. Both the canvas scene and the agent
-// panels read from here so the office and the Morning Brief stay in sync.
+// the skills they can run (on-demand + recurring), and how an inbox item finds
+// its owner. The canvas scene and the agent panels both read from here.
 // ---------------------------------------------------------------------------
 
 export type PropType = "chart" | "vault" | "ledger" | "terminal" | "bell"
-export type ProcessAction = "preview" | "standup" | "brief"
-export interface Process {
+export type Cadence = "daily" | "weekly" | "monthly" | "quarterly"
+
+// A capability a desk can run. `cadence` marks it as a recurring task; `sample`
+// is the placeholder output shown when run (swap for a real call later).
+export interface Skill {
+  id: string
   label: string
-  action: ProcessAction
+  summary: string
+  sample: string
+  cadence?: Cadence
+}
+
+// One invocation of a skill. Lives in session state for now.
+export interface SkillRun {
+  id: number
+  agentId: AgentId
+  skillId: string
+  label: string
+  at: number
+  status: "running" | "done"
+  output?: string
+}
+
+export function cadenceLabel(c: Cadence): string {
+  return { daily: "Daily", weekly: "Weekly", monthly: "Monthly", quarterly: "Quarterly" }[c]
 }
 
 export interface Agent {
@@ -28,11 +50,8 @@ export interface Agent {
   prop: PropType
   phase: number // idle-bob offset
   keywords: string[] // fallback routing when an item has no explicit owner
-  processes: Process[]
+  skills: Skill[]
 }
-
-const preview = (labels: string[]): Process[] =>
-  labels.map((label) => ({ label, action: "preview" as const }))
 
 export const AGENTS: Agent[] = [
   {
@@ -48,13 +67,13 @@ export const AGENTS: Agent[] = [
     prop: "chart",
     phase: 0,
     keywords: ["forecast", "budget", "burn", "runway", "saas", "spend", "metrics", "board", "dashboard", "amazon", "valuation"],
-    processes: preview([
-      "Refresh the forecast",
-      "Budget vs actual variance",
-      "Burn & runway snapshot",
-      "SaaS spend sweep",
-      "Board metrics pack",
-    ]),
+    skills: [
+      { id: "fpa-runway", label: "Burn & runway snapshot", cadence: "weekly", summary: "Net burn vs plan and months of runway at current spend.", sample: "Net burn ~$420k, just under plan. Runway ≈ 14 months. Two lines above forecast: cloud (+$12k), contractors (+$8k)." },
+      { id: "fpa-variance", label: "Budget vs actual variance", cadence: "monthly", summary: "Compare the month's actuals to budget and flag the movers.", sample: "May: revenue +3% vs budget, opex +6%. Largest variance: SaaS (+$18k). Drafted a note for the board pack." },
+      { id: "fpa-saas", label: "SaaS spend sweep", cadence: "monthly", summary: "Inventory SaaS tools and flag duplicates before renewals.", sample: "47 tools, $62k/mo. 6 likely duplicates (2× analytics, 2× e-sign). Est. $9k/mo if consolidated." },
+      { id: "fpa-forecast", label: "Refresh the forecast", summary: "Rebuild the operating forecast from the latest actuals.", sample: "Forecast rebuilt from May actuals. Q3 revenue +4% vs prior model; runway unchanged." },
+      { id: "fpa-board", label: "Board metrics pack", cadence: "monthly", summary: "Assemble the monthly metrics pack for review.", sample: "Drafted the pack: ARR, net burn, runway, headcount, top variances. Ready for your review." },
+    ],
   },
   {
     id: "treasury",
@@ -69,13 +88,13 @@ export const AGENTS: Agent[] = [
     prop: "vault",
     phase: 1.1,
     keywords: ["wire", "bank", "cash", "svb", "mercury", "wells fargo", "first citizens", "sweep", "liquidity", "nonco", "usdc", "fx", "treasury"],
-    processes: preview([
-      "Cash position across banks",
-      "Prep a wire / sweep",
-      "Crypto settlement liquidity",
-      "Runway alarm",
-      "FX exposure",
-    ]),
+    skills: [
+      { id: "tre-cash", label: "Cash position across banks", cadence: "daily", summary: "Consolidated balances across SVB, First Citizens, Mercury, Wells.", sample: "Total cash healthy across 4 banks; none below minimum. 5 payments scheduled today, 5 processed yesterday." },
+      { id: "tre-crypto", label: "Crypto settlement liquidity", cadence: "daily", summary: "Check the settlement wallet is funded for today's runs.", sample: "Nonco: ETH in, $7.5M USDC out yesterday. Settlement wallet funded for today. No action." },
+      { id: "tre-wire", label: "Prep a wire / sweep", summary: "Draft a sweep or wire for your approval.", sample: "Drafted: sweep idle balance → operating; AUS counsel wire queued. Both await your approval." },
+      { id: "tre-runway", label: "Runway alarm", cadence: "weekly", summary: "Alert if the min-cash threshold is at risk in the horizon.", sample: "No breach of the min-cash threshold within the forecast horizon. All clear." },
+      { id: "tre-fx", label: "FX exposure", cadence: "monthly", summary: "Review foreign-currency exposure and hedge needs.", sample: "AUD exposure from counsel invoices is small and within tolerance. No hedge recommended." },
+    ],
   },
   {
     id: "accounting",
@@ -90,13 +109,13 @@ export const AGENTS: Agent[] = [
     prop: "ledger",
     phase: 2.0,
     keywords: ["tax", "audit", "bill.com", "invoice", "close", "reconcil", "numeral", "fica", "gusto", "payroll", "ledger", "401", "guideline", "bsa", "aml", "wework", "bridge", "reimburse"],
-    processes: preview([
-      "Month-end close checklist",
-      "Audit tracker",
-      "Tax filing status",
-      "Approve bills",
-      "Reconciliations",
-    ]),
+    skills: [
+      { id: "acc-recon", label: "Reconciliations", cadence: "weekly", summary: "Reconcile bank and processor activity for the week.", sample: "Bank + processor recon complete through last week. 1 unmatched item ($107 DoorDash) pending a memo." },
+      { id: "acc-close", label: "Month-end close checklist", cadence: "monthly", summary: "Work the close checklist to a clean cutoff.", sample: "Close: 18/24 complete. Open: AUS counsel accrual, WeWork invoices, FICA adjustment." },
+      { id: "acc-tax", label: "Tax filing status", cadence: "weekly", summary: "Status of state filings and any blockers.", sample: "Numeral: 5 states blocked on portal creds (ID/MN/KY/AL/NJ). CO & MS filed. Needs creds today." },
+      { id: "acc-bills", label: "Approve bills", cadence: "daily", summary: "Pull bills and reimbursements awaiting approval.", sample: "Bill.com: 3 bills awaiting approval ($2.5k Fidelifacts + 2). Ramp: 4 reimbursements pending." },
+      { id: "acc-audit", label: "Audit tracker", cadence: "weekly", summary: "Track open audit and confirmation requests.", sample: "BSA/AML (Dante) 14d overdue · Bridge YE confirmation monitoring · Checkout.com credit docs outstanding." },
+    ],
   },
   {
     id: "settlement",
@@ -111,19 +130,19 @@ export const AGENTS: Agent[] = [
     prop: "terminal",
     phase: 3.0,
     keywords: ["settlement", "payout", "processor", "worldpay", "checkout", "chargeback", "reserve", "velonix", "merchant", "recon"],
-    processes: preview([
-      "Run settlement",
-      "Processor recon",
-      "Payout & break monitor",
-      "Chargeback watch",
-      "Reserve tracking",
-    ]),
+    skills: [
+      { id: "set-recon", label: "Processor recon", cadence: "weekly", summary: "Reconcile processor invoices to internal reports.", sample: "Worldpay IC++ invoice 437577906 reconciled to the MI report. 1 fee variance flagged for review." },
+      { id: "set-run", label: "Run settlement", cadence: "daily", summary: "Build today's merchant settlement batch.", sample: "Today's batch built: payouts staged, totals balanced. Ready to release on your go." },
+      { id: "set-payout", label: "Payout & break monitor", cadence: "daily", summary: "Watch payouts and surface settlement breaks.", sample: "All payouts cleared. Yesterday's Velonix break resolved. No open breaks." },
+      { id: "set-chargeback", label: "Chargeback watch", cadence: "weekly", summary: "Monitor dispute volume and evidence deadlines.", sample: "Chargeback ratio within thresholds. 2 new disputes; evidence due in 5 days." },
+      { id: "set-reserve", label: "Reserve tracking", cadence: "monthly", summary: "Track rolling reserves and processor reserve changes.", sample: "Rolling reserves on track. No processor reserve increases this period." },
+    ],
   },
   {
     id: "chief",
     name: "Margo",
     role: "Chief of Staff",
-    blurb: "Keeps the floor moving — gives the brief and runs the standup.",
+    blurb: "Keeps the floor moving — routes the brief and runs the standup.",
     idle: "Floor's calm — nothing needs you this minute.",
     shirt: "#f59e0b",
     tile: [9, 10],
@@ -132,10 +151,9 @@ export const AGENTS: Agent[] = [
     prop: "bell",
     phase: 0.6,
     keywords: ["hire", "candidate", "head of finance", "recruit", "calendar", "office hours", "send-off", "schedule", "standup", "visa"],
-    processes: [
-      { label: "Give the standup", action: "standup" },
-      { label: "Open the Morning Brief", action: "brief" },
-      { label: "What needs me today?", action: "preview" },
+    skills: [
+      { id: "cos-route", label: "Route the morning brief", cadence: "daily", summary: "Sort the daily brief onto the right desks.", sample: "Routed the brief: Ada 7, Theo 1, Sol 1, Margo 2, Fern 0. 5 urgent flagged for first attention." },
+      { id: "cos-today", label: "What needs me today?", summary: "The shortlist of things only you can clear.", sample: "Top 3 for you: Dante BSA/AML (14d), Numeral state creds, Dom's Head-of-Finance shortlist." },
     ],
   },
 ]

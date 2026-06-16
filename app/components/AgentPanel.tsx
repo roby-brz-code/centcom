@@ -1,8 +1,7 @@
 "use client"
 
-import { useState } from "react"
-import type { ActionItem, FYIItem } from "@/types/brief"
-import type { Agent } from "@/app/lib/office"
+import type { ActionItem, AgentId, FYIItem } from "@/types/brief"
+import { type Agent, type Skill, type SkillRun, cadenceLabel } from "@/app/lib/office"
 import ActionCard from "./ActionCard"
 import Portrait from "./Portrait"
 
@@ -16,28 +15,78 @@ function SectionHead({ title, count }: { title: string; count: number }) {
   )
 }
 
-// A desk's working surface: who they are, what's in their tray, and the
-// processes they can run. Actions are the real brief items, so opening a draft
-// or dismissing here is the same action as on the Morning Brief.
+function clock(at: number) {
+  return new Date(at).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })
+}
+
+// One runnable skill: label, cadence/due state, a Run button, and the latest
+// run's output inline.
+function SkillRow({ skill, run, onRun }: { skill: Skill; run?: SkillRun; onRun: () => void }) {
+  const running = run?.status === "running"
+  const done = run?.status === "done"
+  return (
+    <div className="py-3 border-b border-rule-soft">
+      <div className="flex items-baseline gap-2">
+        <span className="font-display text-ink text-[0.95rem]" style={{ fontWeight: 540 }}>
+          {skill.label}
+        </span>
+        {skill.cadence && <span className="label text-ink-faint">{cadenceLabel(skill.cadence)}</span>}
+        {skill.cadence &&
+          (done ? (
+            <span className="label text-ink-faint">· ran {clock(run!.at)}</span>
+          ) : (
+            <span className="label text-accent">· due</span>
+          ))}
+        <button
+          onClick={onRun}
+          disabled={running}
+          className="ml-auto label px-2 py-0.5 rounded-sm border border-rule hover:border-ink hover:bg-paper text-ink transition-colors disabled:opacity-50 disabled:hover:border-rule"
+        >
+          {running ? "Running…" : "Run ▶"}
+        </button>
+      </div>
+      <p className="font-body text-ink-soft text-[0.9rem] leading-snug mt-0.5">{skill.summary}</p>
+      {done && run!.output && (
+        <p className="font-body text-ink text-[0.9rem] leading-snug mt-2 border-l-2 border-accent/50 pl-3">
+          {run!.output}
+        </p>
+      )}
+    </div>
+  )
+}
+
+// A desk's working surface: brief tray (routed by the Chief of Staff), recurring
+// tasks, and on-demand skills. Opening a draft or dismissing here is the same
+// action as on the Morning Brief.
 export default function AgentPanel({
   agent,
   actions,
   fyis,
+  runs,
   onDismiss,
+  onRunSkill,
   onClose,
-  onRunStandup,
+  chiefView,
 }: {
   agent: Agent
   actions: ActionItem[]
   fyis: FYIItem[]
+  runs: SkillRun[]
   onDismiss: (id: number) => void
+  onRunSkill: (skill: Skill) => void
   onClose: () => void
-  onRunStandup: () => void
+  chiefView?: {
+    routes: { id: AgentId; name: string; role: string; shirt: string; active: number; urgent: number }[]
+    recurringDue: number
+    onConveneStandup: () => void
+  }
 }) {
-  const [previewLine, setPreviewLine] = useState<string | null>(null)
-
   const urgent = actions.filter((a) => a.urgent)
   const normal = actions.filter((a) => !a.urgent)
+  const recurring = agent.skills.filter((s) => s.cadence)
+  const onDemand = agent.skills.filter((s) => !s.cadence)
+  const latestRun = (skillId: string) => runs.find((r) => r.skillId === skillId)
+
   const greeting = actions.length
     ? `${urgent.length ? `${urgent.length} urgent · ` : ""}${actions.length} in your tray.`
     : fyis.length
@@ -76,8 +125,42 @@ export default function AgentPanel({
           </button>
         </header>
 
-        {/* Tray */}
         <div className="flex-1 overflow-y-auto px-5 pb-8">
+          {/* Chief of Staff orchestrator view */}
+          {chiefView && (
+            <div className="mt-5 p-4 bg-paper-raised border border-rule rounded-sm">
+              <div className="label text-ink-faint">Today's routing</div>
+              <ul className="mt-2 space-y-1">
+                {chiefView.routes.map((r) => (
+                  <li key={r.id} className="flex items-baseline gap-2">
+                    <span className="h-2 w-2 rounded-full shrink-0" style={{ background: r.shirt }} />
+                    <span className="font-body text-ink text-[0.92rem]">{r.name}</span>
+                    <span className="label text-ink-faint">{r.role}</span>
+                    <span className={`ml-auto label tabular-nums ${r.urgent > 0 ? "text-danger" : "text-ink-faint"}`}>
+                      {r.active > 0 ? `${r.active}${r.urgent > 0 ? ` · ${r.urgent} urgent` : ""}` : "clear"}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+              <p className="label text-ink-faint mt-3">{chiefView.recurringDue} recurring tasks due across the floor</p>
+              <div className="flex flex-wrap gap-2 mt-3">
+                <button
+                  onClick={chiefView.onConveneStandup}
+                  className="label px-2.5 py-1 rounded-sm border border-rule hover:border-ink hover:bg-paper text-ink transition-colors"
+                >
+                  🔔 Convene standup
+                </button>
+                <a
+                  href="/"
+                  className="label px-2.5 py-1 rounded-sm border border-rule hover:border-ink hover:bg-paper text-ink transition-colors"
+                >
+                  Open Morning Brief →
+                </a>
+              </div>
+            </div>
+          )}
+
+          {/* Brief tray */}
           {urgent.length > 0 && (
             <section>
               <SectionHead title="Needs you first" count={urgent.length} />
@@ -126,40 +209,25 @@ export default function AgentPanel({
             </section>
           )}
 
-          {actions.length === 0 && fyis.length === 0 && (
-            <p className="font-body italic text-ink-soft mt-10 text-center">
-              {agent.idle}
-            </p>
+          {/* Recurring tasks */}
+          {recurring.length > 0 && (
+            <section>
+              <SectionHead title="Recurring" count={recurring.length} />
+              {recurring.map((skill) => (
+                <SkillRow key={skill.id} skill={skill} run={latestRun(skill.id)} onRun={() => onRunSkill(skill)} />
+              ))}
+            </section>
           )}
 
-          {/* Processes — placeholders for now, wired up next */}
-          <SectionHead title="Run a process" count={agent.processes.length} />
-          <div className="flex flex-wrap gap-2 mt-2">
-            {agent.processes.map((proc) =>
-              proc.action === "brief" ? (
-                <a
-                  key={proc.label}
-                  href="/"
-                  className="label border border-rule hover:border-ink hover:bg-paper-raised px-2 py-1 rounded-sm text-ink transition-colors"
-                >
-                  {proc.label} →
-                </a>
-              ) : (
-                <button
-                  key={proc.label}
-                  onClick={() =>
-                    proc.action === "standup"
-                      ? onRunStandup()
-                      : setPreviewLine(`▶ ${agent.name} would run “${proc.label}” — wiring up next.`)
-                  }
-                  className="label border border-rule hover:border-ink hover:bg-paper-raised px-2 py-1 rounded-sm text-ink transition-colors"
-                >
-                  {proc.label}
-                </button>
-              ),
-            )}
-          </div>
-          {previewLine && <p className="label text-accent mt-3">{previewLine}</p>}
+          {/* On-demand skills */}
+          {onDemand.length > 0 && (
+            <section>
+              <SectionHead title="Skills" count={onDemand.length} />
+              {onDemand.map((skill) => (
+                <SkillRow key={skill.id} skill={skill} run={latestRun(skill.id)} onRun={() => onRunSkill(skill)} />
+              ))}
+            </section>
+          )}
         </div>
       </aside>
     </>
