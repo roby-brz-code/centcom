@@ -12,11 +12,15 @@ import {
   CHAR,
   drawSprite,
   isRecurringDue,
+  ownerOf,
+  type LinearIssue,
   type PropType,
 } from "@/app/lib/office"
+import linearData from "@/data/linear.json"
 import { useDismissed } from "../hooks/useDismissed"
 import { useRuns } from "../hooks/useRuns"
 import AgentPanel from "./AgentPanel"
+import OpenItems from "./OpenItems"
 
 // ---------------------------------------------------------------------------
 // The Office — pixel-art RPG view over the live Morning Brief.
@@ -139,6 +143,31 @@ export default function OfficeScene() {
         urgent: buckets[a.id].urgent,
       })),
     [buckets],
+  )
+
+  // Open-items rail: active brief tasks (routed to a desk) + open Linear issues.
+  const briefOpen = useMemo(
+    () =>
+      brief.actions
+        .filter((a) => !dismissedIds.includes(a.id))
+        .map((a) => ({ item: a, owner: ownerOf(a) }))
+        .sort(
+          (x, y) =>
+            Number(y.item.urgent) - Number(x.item.urgent) ||
+            (y.item.overduedays ?? 0) - (x.item.overduedays ?? 0),
+        ),
+    [brief, dismissedIds],
+  )
+  const linearIssues = useMemo(
+    () =>
+      (linearData.issues as LinearIssue[])
+        .slice()
+        .sort(
+          (a, b) =>
+            (a.priority === 0 ? 5 : a.priority) - (b.priority === 0 ? 5 : b.priority) ||
+            (a.statusType === "started" ? 0 : 1) - (b.statusType === "started" ? 0 : 1),
+        ),
+    [],
   )
 
   // Keep the game loop aware of whether an overlay is capturing input.
@@ -282,8 +311,9 @@ export default function OfficeScene() {
   }, [])
 
   return (
-    <div className="w-full flex flex-col items-center">
-      <div className="relative w-full" style={{ maxWidth: 760 }}>
+    <div className="w-full">
+      <div className="flex flex-col xl:flex-row xl:items-start xl:justify-center gap-6">
+      <div className="relative w-full mx-auto xl:mx-0" style={{ maxWidth: 760 }}>
         <div className="relative w-full" style={{ aspectRatio: "320 / 224" }}>
           <canvas
             ref={canvasRef}
@@ -337,6 +367,14 @@ export default function OfficeScene() {
             🔔 Standup
           </button>
         </div>
+      </div>
+
+        <OpenItems
+          briefItems={briefOpen}
+          linearIssues={linearIssues}
+          pulledAt={linearData.pulledAt}
+          onSelect={(id) => setSelectedId(id)}
+        />
       </div>
 
       {selectedAgent && (

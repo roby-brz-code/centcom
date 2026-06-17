@@ -1,0 +1,106 @@
+{
+  "pulledAt": "2026-06-16",
+  "issues": [
+    {
+      "id": "FIN-64",
+      "title": "SG Airwallex opening",
+      "url": "https://linear.app/breezecash/issue/FIN-64",
+      "team": "Finance",
+      "priority": 2,
+      "priorityLabel": "High",
+      "status": "In Progress",
+      "statusType": "started",
+      "dueDate": "2026-03-06"
+    },
+    {
+      "id": "FIN-241",
+      "title": "Adjust Ember Fund fees — Mar 27 to Apr 28",
+      "url": "https://linear.app/breezecash/issue/FIN-241",
+      "team": "Finance",
+      "priority": 2,
+      "priorityLabel": "High",
+      "status": "Todo",
+      "statusType": "unstarted"
+    },
+    {
+      "id": "BREEZ-9974",
+      "title": "Record unlogged ad hoc crypto topups",
+      "url": "https://linear.app/breezecash/issue/BREEZ-9974/record-unlogged-ad-hoc-crypto-topups",
+      "team": "Breeze",
+      "priority": 2,
+      "priorityLabel": "High",
+      "status": "Backlog",
+      "statusType": "backlog"
+    },
+    {
+      "id": "BREEZ-10005",
+      "title": "Insurance Coverage Followup",
+      "url": "https://linear.app/breezecash/issue/BREEZ-10005/insurance-coverage-followup",
+      "team": "Breeze",
+      "priority": 0,
+      "priorityLabel": "No priority",
+      "status": "In Progress",
+      "statusType": "started"
+    },
+    {
+      "id": "FIN-271",
+      "title": "Create pricing documentation for Peter",
+      "url": "https://linear.app/breezecash/issue/FIN-271",
+      "team": "Finance",
+      "priority": 0,
+      "priorityLabel": "No priority",
+      "status": "Todo",
+      "statusType": "unstarted"
+    },
+    {
+      "id": "BIZOPS-147",
+      "title": "Audited financial statements 2024 and 2025",
+      "url": "https://linear.app/breezecash/issue/BIZOPS-147/audited-financial-statements-in-2024-and-2025",
+      "team": "Business Operations",
+      "priority": 0,
+      "priorityLabel": "No priority",
+      "status": "Todo",
+      "statusType": "unstarted"
+    },
+    {
+      "id": "BIZOPS-140",
+      "title": "FYE 2025 financials (BS, P&L, cash flow)",
+      "url": "https://linear.app/breezecash/issue/BIZOPS-140/fye-2025-financials-balance-sheet-pandl-and-cash-flow",
+      "team": "Business Operations",
+      "priority": 0,
+      "priorityLabel": "No priority",
+      "status": "Todo",
+      "statusType": "unstarted"
+    },
+    {
+      "id": "BIZOPS-142",
+      "title": "Projected processing volume — next 12 months",
+      "url": "https://linear.app/breezecash/issue/BIZOPS-142/the-projected-processing-volume-for-the-next-12-months",
+      "team": "Business Operations",
+      "priority": 0,
+      "priorityLabel": "No priority",
+      "status": "Todo",
+      "statusType": "unstarted"
+    },
+    {
+      "id": "BIZOPS-141",
+      "title": "Abbreviated FY2025 financials for Sweepstakes Ltd",
+      "url": "https://linear.app/breezecash/issue/BIZOPS-141/last-time-we-received-abbreviated-fy-2024-financials-for-sweepstakes",
+      "team": "Business Operations",
+      "priority": 0,
+      "priorityLabel": "No priority",
+      "status": "Todo",
+      "statusType": "unstarted"
+    },
+    {
+      "id": "BREEZ-9589",
+      "title": "Get LEI and address for Breeze Labs Inc",
+      "url": "https://linear.app/breezecash/issue/BREEZ-9589/get-lei-and-address-for-breeze-labs-inc",
+      "team": "Breeze",
+      "priority": 0,
+      "priorityLabel": "No priority",
+      "status": "Todo",
+      "statusType": "unstarted"
+    }
+  ]
+}

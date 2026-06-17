@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 export default function OfficePage() {
   return (
     <div className="min-h-screen">
-      <div className="max-w-[820px] mx-auto px-6 sm:px-10">
+      <div className="max-w-[1180px] mx-auto px-6 sm:px-10">
         <header className="pt-10 pb-4">
           <div className="flex items-baseline justify-between mb-3">
             <Link href="/" className="label text-ink-soft hover:text-ink transition-colors">

@@ -38,6 +38,19 @@ export interface Report {
   notes: string[]
 }
 
+// A Linear issue, snapshotted into data/linear.json.
+export interface LinearIssue {
+  id: string // identifier, e.g. FIN-241
+  title: string
+  url: string
+  team: string
+  priority: number // 0 none, 1 urgent, 2 high, 3 medium, 4 low
+  priorityLabel: string
+  status: string
+  statusType: string // started | unstarted | backlog
+  dueDate?: string
+}
+
 // One invocation of a skill. Lives in session state for now.
 export interface SkillRun {
   id: number
