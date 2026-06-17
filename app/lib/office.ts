@@ -44,11 +44,19 @@ export interface LinearIssue {
   title: string
   url: string
   team: string
+  owner?: AgentId // which desk owns it
   priority: number // 0 none, 1 urgent, 2 high, 3 medium, 4 low
   priorityLabel: string
   status: string
   statusType: string // started | unstarted | backlog
   dueDate?: string
+}
+
+export function isLinearOverdue(issue: LinearIssue): boolean {
+  return !!issue.dueDate && new Date(issue.dueDate) < new Date(new Date().toDateString())
+}
+export function isLinearUrgent(issue: LinearIssue): boolean {
+  return issue.priority === 1 || issue.priority === 2 || isLinearOverdue(issue)
 }
 
 // One invocation of a skill. Lives in session state for now.
@@ -291,6 +299,7 @@ export interface AgentBucket {
   agent: Agent
   actions: ActionItem[] // active (non-dismissed), urgent first
   fyis: FYIItem[]
+  linear: LinearIssue[]
   urgent: number
   active: number
   leadText: string // the desk's headline talking point for the standup
@@ -299,15 +308,16 @@ export interface AgentBucket {
 const byOverdue = (a: ActionItem, b: ActionItem) =>
   (b.overduedays ?? 0) - (a.overduedays ?? 0)
 
-// Group the live brief onto desks, dropping anything already dismissed.
+// Group the live brief + Linear issues onto desks, dropping dismissed brief items.
 export function bucketByAgent(
   brief: Brief,
+  linearIssues: LinearIssue[],
   dismissedIds: number[],
 ): Record<AgentId, AgentBucket> {
   const buckets = Object.fromEntries(
     AGENTS.map((agent) => [
       agent.id,
-      { agent, actions: [], fyis: [], urgent: 0, active: 0, leadText: "" } as AgentBucket,
+      { agent, actions: [], fyis: [], linear: [], urgent: 0, active: 0, leadText: "" } as AgentBucket,
     ]),
   ) as Record<AgentId, AgentBucket>
 
@@ -318,14 +328,17 @@ export function bucketByAgent(
   for (const fyi of brief.fyis) {
     buckets[ownerOf(fyi)].fyis.push(fyi)
   }
+  for (const issue of linearIssues) {
+    buckets[issue.owner ?? "chief"].linear.push(issue)
+  }
 
   for (const agent of AGENTS) {
     const b = buckets[agent.id]
     b.actions.sort((x, y) => Number(y.urgent) - Number(x.urgent) || byOverdue(x, y))
-    b.active = b.actions.length
-    b.urgent = b.actions.filter((a) => a.urgent).length
+    b.active = b.actions.length + b.linear.length
+    b.urgent = b.actions.filter((a) => a.urgent).length + b.linear.filter(isLinearUrgent).length
     const lead = b.actions[0] ?? b.fyis[0]
-    b.leadText = lead ? lead.summary : agent.idle
+    b.leadText = lead ? lead.summary : b.linear[0]?.title ?? agent.idle
   }
 
   return buckets

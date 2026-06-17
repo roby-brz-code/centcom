@@ -1,10 +1,19 @@
 "use client"
 
 import type { ActionItem, AgentId, FYIItem } from "@/types/brief"
-import { type Agent, type Report, type Skill, type SkillRun, cadenceLabel, isRecurringDue } from "@/app/lib/office"
+import {
+  type Agent,
+  type LinearIssue,
+  type Report,
+  type Skill,
+  type SkillRun,
+  cadenceLabel,
+  isRecurringDue,
+} from "@/app/lib/office"
 import reportsData from "@/data/reports.json"
 import ActionCard from "./ActionCard"
 import Portrait from "./Portrait"
+import { LinearRow } from "./OpenItems"
 
 const REPORTS = reportsData as unknown as Record<string, Report>
 
@@ -111,6 +120,7 @@ export default function AgentPanel({
   agent,
   actions,
   fyis,
+  linear,
   runs,
   onDismiss,
   onRunSkill,
@@ -120,6 +130,7 @@ export default function AgentPanel({
   agent: Agent
   actions: ActionItem[]
   fyis: FYIItem[]
+  linear: LinearIssue[]
   runs: SkillRun[]
   onDismiss: (id: number) => void
   onRunSkill: (skill: Skill) => void
@@ -138,8 +149,9 @@ export default function AgentPanel({
   const lastDoneOf = (skillId: string) => runs.find((r) => r.skillId === skillId && r.status === "done")
   const isRunning = (skillId: string) => runs.some((r) => r.skillId === skillId && r.status === "running")
 
-  const greeting = actions.length
-    ? `${urgent.length ? `${urgent.length} urgent · ` : ""}${actions.length} in your tray.`
+  const trayCount = actions.length + linear.length
+  const greeting = trayCount
+    ? `${urgent.length ? `${urgent.length} urgent · ` : ""}${trayCount} in your tray.`
     : fyis.length
       ? `Quiet desk — ${fyis.length} noted.`
       : "All clear — nothing in the tray."
@@ -257,6 +269,15 @@ export default function AgentPanel({
                   </li>
                 ))}
               </ul>
+            </section>
+          )}
+
+          {linear.length > 0 && (
+            <section>
+              <SectionHead title="Linear" count={linear.length} />
+              {linear.map((issue) => (
+                <LinearRow key={issue.id} issue={issue} />
+              ))}
             </section>
           )}
 

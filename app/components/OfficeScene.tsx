@@ -51,6 +51,15 @@ const SOLIDS: [number, number, number, number][] = [
 
 const PLAYER = charPalette("#3b5a7a") // Roby
 
+// Linear issues, sorted by priority then in-progress (static snapshot).
+const LINEAR_ISSUES = (linearData.issues as LinearIssue[])
+  .slice()
+  .sort(
+    (a, b) =>
+      (a.priority === 0 ? 5 : a.priority) - (b.priority === 0 ? 5 : b.priority) ||
+      (a.statusType === "started" ? 0 : 1) - (b.statusType === "started" ? 0 : 1),
+  )
+
 function drawDesk(ctx: CanvasRenderingContext2D, tx: number, ty: number, w: number) {
   const x = tx * TS
   const y = ty * TS
@@ -91,7 +100,7 @@ function drawProp(ctx: CanvasRenderingContext2D, type: PropType, tx: number, ty:
 export default function OfficeScene() {
   const brief = briefData as Brief
   const { dismissedIds, dismiss } = useDismissed(brief.generatedAt)
-  const buckets = useMemo(() => bucketByAgent(brief, dismissedIds), [brief, dismissedIds])
+  const buckets = useMemo(() => bucketByAgent(brief, LINEAR_ISSUES, dismissedIds), [brief, dismissedIds])
   const totals = useMemo(() => {
     const active = brief.actions.filter((a) => !dismissedIds.includes(a.id))
     return {
@@ -157,17 +166,6 @@ export default function OfficeScene() {
             (y.item.overduedays ?? 0) - (x.item.overduedays ?? 0),
         ),
     [brief, dismissedIds],
-  )
-  const linearIssues = useMemo(
-    () =>
-      (linearData.issues as LinearIssue[])
-        .slice()
-        .sort(
-          (a, b) =>
-            (a.priority === 0 ? 5 : a.priority) - (b.priority === 0 ? 5 : b.priority) ||
-            (a.statusType === "started" ? 0 : 1) - (b.statusType === "started" ? 0 : 1),
-        ),
-    [],
   )
 
   // Keep the game loop aware of whether an overlay is capturing input.
@@ -371,7 +369,7 @@ export default function OfficeScene() {
 
         <OpenItems
           briefItems={briefOpen}
-          linearIssues={linearIssues}
+          linearIssues={LINEAR_ISSUES}
           pulledAt={linearData.pulledAt}
           onSelect={(id) => setSelectedId(id)}
         />
@@ -382,6 +380,7 @@ export default function OfficeScene() {
           agent={selectedAgent}
           actions={buckets[selectedAgent.id].actions}
           fyis={buckets[selectedAgent.id].fyis}
+          linear={buckets[selectedAgent.id].linear}
           runs={runs.filter((r) => r.agentId === selectedAgent.id)}
           onDismiss={dismiss}
           onRunSkill={(skill) => runSkill(selectedAgent.id, skill)}
