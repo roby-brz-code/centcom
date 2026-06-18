@@ -2,20 +2,24 @@
 
 import type { ActionItem, AgentId, FYIItem } from "@/types/brief"
 import {
+  AGENT_BY_ID,
   type Agent,
   type LinearIssue,
   type Report,
+  type ScoutBrief,
   type Skill,
   type SkillRun,
   cadenceLabel,
   isRecurringDue,
 } from "@/app/lib/office"
 import reportsData from "@/data/reports.json"
+import scoutData from "@/data/scout.json"
 import ActionCard from "./ActionCard"
 import Portrait from "./Portrait"
 import { LinearRow } from "./OpenItems"
 
 const REPORTS = reportsData as unknown as Record<string, Report>
+const SCOUT = scoutData as unknown as ScoutBrief
 
 function SectionHead({ title, count }: { title: string; count: number }) {
   return (
@@ -136,7 +140,6 @@ export default function AgentPanel({
   onRunSkill: (skill: Skill) => void
   onClose: () => void
   chiefView?: {
-    routes: { id: AgentId; name: string; role: string; shirt: string; active: number; urgent: number }[]
     recurringDue: number
     onConveneStandup: () => void
   }
@@ -192,20 +195,50 @@ export default function AgentPanel({
           {/* Chief of Staff orchestrator view */}
           {chiefView && (
             <div className="mt-5 p-4 bg-paper-raised border border-rule rounded-sm">
-              <div className="label text-ink-faint">Today's routing</div>
-              <ul className="mt-2 space-y-1">
-                {chiefView.routes.map((r) => (
-                  <li key={r.id} className="flex items-baseline gap-2">
-                    <span className="h-2 w-2 rounded-full shrink-0" style={{ background: r.shirt }} />
-                    <span className="font-body text-ink text-[0.92rem]">{r.name}</span>
-                    <span className="label text-ink-faint">{r.role}</span>
-                    <span className={`ml-auto label tabular-nums ${r.urgent > 0 ? "text-danger" : "text-ink-faint"}`}>
-                      {r.active > 0 ? `${r.active}${r.urgent > 0 ? ` · ${r.urgent} urgent` : ""}` : "clear"}
+              <div className="flex items-baseline justify-between">
+                <span className="label text-ink">Scout · Daily Brief</span>
+                <span className="label text-ink-faint">{SCOUT.date}</span>
+              </div>
+              <p className="font-body italic text-ink-soft text-[0.92rem] leading-snug mt-1">{SCOUT.headline}</p>
+
+              <div className="label text-ink-faint mt-3 mb-1">Top of the list</div>
+              {SCOUT.topItems.map((t, i) => (
+                <div key={i} className="py-1.5 border-b border-rule-soft">
+                  <div className="flex items-baseline gap-2">
+                    {t.urgent ? (
+                      <span className="h-2 w-2 rounded-full bg-danger shrink-0" />
+                    ) : (
+                      <span
+                        className="h-2 w-2 rounded-full shrink-0"
+                        style={{ background: t.owner ? AGENT_BY_ID[t.owner].shirt : "var(--ink-faint)" }}
+                      />
+                    )}
+                    <span className="font-display text-ink text-[0.92rem]" style={{ fontWeight: 540 }}>
+                      {t.title}
                     </span>
-                  </li>
-                ))}
-              </ul>
-              <p className="label text-ink-faint mt-3">{chiefView.recurringDue} recurring tasks due across the floor</p>
+                  </div>
+                  <p className="font-body text-ink-soft text-[0.85rem] leading-snug mt-0.5 pl-4">{t.note}</p>
+                </div>
+              ))}
+
+              <div className="label text-ink-faint mt-3 mb-1">Linear in focus</div>
+              {SCOUT.linearFocus.map((l) => (
+                <a
+                  key={l.id}
+                  href={l.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-baseline gap-2 py-1 hover:bg-paper transition-colors"
+                >
+                  <span className="label text-ink-faint shrink-0">{l.id}</span>
+                  <span className="font-body text-ink text-[0.88rem] truncate">{l.title}</span>
+                  <span className="label text-ink-faint ml-auto shrink-0">{l.note}</span>
+                </a>
+              ))}
+
+              <p className="label text-ink-faint mt-3">
+                {SCOUT.meetings.length} meetings · {chiefView.recurringDue} recurring due
+              </p>
               <div className="flex flex-wrap gap-2 mt-3">
                 <button
                   onClick={chiefView.onConveneStandup}
@@ -214,12 +247,15 @@ export default function AgentPanel({
                   🔔 Convene standup
                 </button>
                 <a
-                  href="/"
+                  href={SCOUT.source}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="label px-2.5 py-1 rounded-sm border border-rule hover:border-ink hover:bg-paper text-ink transition-colors"
                 >
-                  Open Morning Brief →
+                  Open in Cowork →
                 </a>
               </div>
+              <p className="label text-ink-faint mt-2">Scout · pulled {SCOUT.pulledAt}</p>
             </div>
           )}
 

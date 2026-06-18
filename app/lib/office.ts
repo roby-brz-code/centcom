@@ -59,6 +59,30 @@ export function isLinearUrgent(issue: LinearIssue): boolean {
   return issue.priority === 1 || issue.priority === 2 || isLinearOverdue(issue)
 }
 
+// Scout's daily brief (Cowork), snapshotted into data/scout.json. Drives the
+// Chief of Staff desk.
+export interface ScoutTopItem {
+  title: string
+  note: string
+  owner?: AgentId
+  urgent?: boolean
+}
+export interface ScoutLinearFocus {
+  id: string
+  title: string
+  note: string
+  url: string
+}
+export interface ScoutBrief {
+  date: string
+  pulledAt: string
+  source: string
+  headline: string
+  topItems: ScoutTopItem[]
+  linearFocus: ScoutLinearFocus[]
+  meetings: string[]
+}
+
 // One invocation of a skill. Lives in session state for now.
 export interface SkillRun {
   id: number

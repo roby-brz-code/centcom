@@ -1,0 +1,27 @@
+{
+  "date": "Tue 16 Jun",
+  "pulledAt": "2026-06-16",
+  "source": "https://breezecash.slack.com/archives/D08PC0H5EN6/p1781611828254009",
+  "headline": "Five things up top, three High Linear issues in focus, and 6 meetings.",
+  "topItems": [
+    { "title": "Kim Petry (Burkland) — move noon Model Update", "note": "Out sick; wants Wed/Thurs. Reply with a new time before midday.", "owner": "chief", "urgent": true },
+    { "title": "CrowdStrike 3-yr prepay — sign-off", "note": "Kashish needs sign-off on ~$20K (~100 licenses) and how to fund it.", "owner": "fpa", "urgent": true },
+    { "title": "Polish (BEAMO) 2025 filing", "note": "Millie + LegalBison are waiting on your availability to book the e-meeting.", "owner": "accounting", "urgent": false },
+    { "title": "Sequoia annual-metrics request", "note": "Annual metrics ask — you + DP + Millie.", "owner": "fpa", "urgent": false },
+    { "title": "Jasmine — blocked on a review", "note": "Flagged she's blocked on you.", "owner": "accounting", "urgent": true }
+  ],
+  "linearFocus": [
+    { "id": "FIN-232", "title": "Cashflow Forecast", "note": "High · overdue", "url": "https://linear.app/breezecash/issue/FIN-232" },
+    { "id": "FIN-274", "title": "Breeze Delaware filing", "note": "High · new", "url": "https://linear.app/breezecash/issue/FIN-274" },
+    { "id": "FIN-64", "title": "SG Airwallex opening", "note": "High · in progress", "url": "https://linear.app/breezecash/issue/FIN-64" },
+    { "id": "FIN-277", "title": "Treasury check", "note": "due Jun 22", "url": "https://linear.app/breezecash/issue/FIN-277" }
+  ],
+  "meetings": [
+    "10:00 Pave Bank intro",
+    "11:00 Rob + Rob",
+    "12:00 Model Update (likely moving)",
+    "1:00 Recon Standup",
+    "3:30 Millie",
+    "8:00 PM Recon Sync"
+  ]
+}

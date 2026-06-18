@@ -15,8 +15,10 @@ import {
   ownerOf,
   type LinearIssue,
   type PropType,
+  type ScoutBrief,
 } from "@/app/lib/office"
 import linearData from "@/data/linear.json"
+import scoutData from "@/data/scout.json"
 import { useDismissed } from "../hooks/useDismissed"
 import { useRuns } from "../hooks/useRuns"
 import AgentPanel from "./AgentPanel"
@@ -60,6 +62,9 @@ const LINEAR_ISSUES = (linearData.issues as LinearIssue[])
       (a.statusType === "started" ? 0 : 1) - (b.statusType === "started" ? 0 : 1),
   )
 
+// Scout's daily brief (drives the Chief of Staff + the standup).
+const SCOUT = scoutData as unknown as ScoutBrief
+
 function drawDesk(ctx: CanvasRenderingContext2D, tx: number, ty: number, w: number) {
   const x = tx * TS
   const y = ty * TS
@@ -101,15 +106,6 @@ export default function OfficeScene() {
   const brief = briefData as Brief
   const { dismissedIds, dismiss } = useDismissed(brief.generatedAt)
   const buckets = useMemo(() => bucketByAgent(brief, LINEAR_ISSUES, dismissedIds), [brief, dismissedIds])
-  const totals = useMemo(() => {
-    const active = brief.actions.filter((a) => !dismissedIds.includes(a.id))
-    return {
-      urgent: active.filter((a) => a.urgent).length,
-      active: active.length,
-      fyis: brief.fyis.length,
-    }
-  }, [brief, dismissedIds])
-
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
   const playerRef = useRef({ x: 80, y: 112 })
   const keysRef = useRef<Set<string>>(new Set())
@@ -140,18 +136,6 @@ export default function OfficeScene() {
         0,
       ),
     [lastDoneAt],
-  )
-  const routes = useMemo(
-    () =>
-      AGENTS.map((a) => ({
-        id: a.id,
-        name: a.name,
-        role: a.role,
-        shirt: a.shirt,
-        active: buckets[a.id].active,
-        urgent: buckets[a.id].urgent,
-      })),
-    [buckets],
   )
 
   // Open-items rail: active brief tasks (routed to a desk) + open Linear issues.
@@ -387,7 +371,7 @@ export default function OfficeScene() {
           onClose={() => setSelectedId(null)}
           chiefView={
             selectedAgent.id === "chief"
-              ? { routes, recurringDue, onConveneStandup: () => { setSelectedId(null); setStandupOpen(true) } }
+              ? { recurringDue, onConveneStandup: () => { setSelectedId(null); setStandupOpen(true) } }
               : undefined
           }
         />
@@ -410,19 +394,38 @@ export default function OfficeScene() {
             >
               Esc ✕
             </button>
-            <div className="label text-ink-faint">{brief.date} · weekly standup</div>
+            <div className="label text-ink-faint">{SCOUT.date} · standup</div>
             <h2 className="font-display text-ink text-2xl" style={{ fontWeight: 600 }}>
               Around the table
             </h2>
             <p className="font-body italic text-ink-soft mt-1 leading-snug">
-              Margo gives the brief:{" "}
-              <span className="not-italic text-ink">{totals.urgent} urgent</span> ·{" "}
-              {totals.active} to action · {totals.fyis} noted across the floor.
+              Margo gives Scout&apos;s brief:{" "}
+              <span className="not-italic text-ink">{SCOUT.topItems.length} up top</span> ·{" "}
+              {SCOUT.linearFocus.length} Linear in focus · {SCOUT.meetings.length} meetings.
             </p>
             <div className="mt-3 border-t-2 border-ink" />
             <div className="mt-0.5 border-t border-ink" />
 
-            <ul className="mt-3">
+            <div className="label text-ink-faint mt-3 mb-1">Top of the list</div>
+            <ul className="mb-2">
+              {SCOUT.topItems.map((t, i) => (
+                <li key={i} className="flex gap-3 py-2 border-b border-rule-soft">
+                  <span
+                    className="mt-1.5 h-2.5 w-2.5 rounded-full shrink-0"
+                    style={{ background: t.urgent ? "var(--danger)" : t.owner ? AGENT_BY_ID[t.owner].shirt : "var(--ink-faint)" }}
+                  />
+                  <div className="min-w-0">
+                    <div className="font-display text-ink text-[0.95rem]" style={{ fontWeight: 540 }}>
+                      {t.title}
+                    </div>
+                    <p className="font-body text-ink-soft text-[0.9rem] leading-snug">{t.note}</p>
+                  </div>
+                </li>
+              ))}
+            </ul>
+
+            <div className="label text-ink-faint mt-4 mb-1">Around the table</div>
+            <ul>
               {AGENTS.map((a) => {
                 const b = buckets[a.id]
                 const count =
@@ -457,12 +460,22 @@ export default function OfficeScene() {
               })}
             </ul>
 
-            <Link
-              href="/"
-              className="label text-ink inline-block mt-5 underline decoration-rule decoration-1 underline-offset-2 hover:decoration-ink transition-colors"
-            >
-              Open the full Morning Brief →
-            </Link>
+            <div className="flex flex-wrap gap-4 mt-5">
+              <a
+                href={SCOUT.source}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="label text-ink underline decoration-rule decoration-1 underline-offset-2 hover:decoration-ink transition-colors"
+              >
+                Open Scout in Cowork →
+              </a>
+              <Link
+                href="/"
+                className="label text-ink underline decoration-rule decoration-1 underline-offset-2 hover:decoration-ink transition-colors"
+              >
+                The Morning Brief →
+              </Link>
+            </div>
           </div>
         </div>
       )}
