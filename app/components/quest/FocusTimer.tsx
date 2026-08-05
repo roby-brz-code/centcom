@@ -11,15 +11,19 @@ import {
 } from "@/lib/xp"
 
 const PRESETS = [25, 45, 60, 90]
+const RING_R = 140
+const RING_C = 2 * Math.PI * RING_R
 
 type Phase = "idle" | "running" | "paused"
 
 export default function FocusTimer({
   quests,
+  sessionsToday,
   onRunningChange,
   onComplete,
 }: {
   quests: Quest[]
+  sessionsToday: number
   onRunningChange: (running: boolean) => void
   onComplete: (durationMin: number, linkedQuest: Quest | null) => void
 }) {
@@ -92,103 +96,141 @@ export default function FocusTimer({
 
   const mm = String(Math.floor(remainingMs / 60_000)).padStart(2, "0")
   const ss = String(Math.floor((remainingMs % 60_000) / 1000)).padStart(2, "0")
+  const frac = phase === "idle" ? 1 : remainingMs / (durationMin * 60_000)
   const reward = sessionXp(durationMin, linkedId !== "")
 
   return (
-    <section className="qm-card p-5 sm:p-7 flex flex-col items-center gap-5">
-      <h2 className="font-pixel text-[0.65rem] text-qm-gold tracking-wider self-start">
-        ◆ FOCUS TIMER
-      </h2>
-
-      <div
-        className={`font-pixel tabular-nums text-[3rem] sm:text-[3.75rem] leading-none ${
-          phase === "running" ? "text-qm-bright qm-pulse" : "text-qm-dim"
-        }`}
-      >
-        {mm}:{ss}
+    <section className="flex flex-col items-center gap-6">
+      {/* Linked quest pill */}
+      <div className="qm-pill px-1 py-1">
+        <select
+          value={linkedId}
+          onChange={(e) => setLinkedId(e.target.value)}
+          disabled={phase !== "idle"}
+          className="bg-transparent text-qm-teal text-[0.9rem] font-medium px-3 py-1 outline-none cursor-pointer max-w-[70vw] disabled:cursor-default"
+          aria-label="Link session to a quest"
+        >
+          <option value="">No quest linked</option>
+          {quests.map((q) => (
+            <option key={q.id} value={q.id}>
+              {q.identifier} · {q.title}
+            </option>
+          ))}
+        </select>
       </div>
 
-      {phase === "idle" ? (
-        <>
-          <div className="flex items-center gap-2 flex-wrap justify-center">
-            {PRESETS.map((p) => (
-              <button
-                key={p}
-                onClick={() => setDurationMin(p)}
-                className={`qm-btn font-pixel text-[0.55rem] px-2.5 py-1.5 ${
-                  durationMin === p ? "qm-btn-active" : ""
-                }`}
-              >
-                {p}m
-              </button>
-            ))}
-            <input
-              type="number"
-              min={MIN_SESSION_MIN}
-              max={MAX_SESSION_MIN}
-              value={durationMin}
-              onChange={(e) =>
-                setDurationMin(
-                  Math.max(MIN_SESSION_MIN, Math.min(MAX_SESSION_MIN, Number(e.target.value) || MIN_SESSION_MIN))
-                )
-              }
-              className="qm-btn font-pixel text-[0.55rem] w-16 px-2 py-1.5 text-center bg-transparent"
-              aria-label="Custom minutes"
-            />
-          </div>
+      {/* Session dots — today's completed sessions */}
+      <div className="flex items-center gap-2.5" aria-label={`${sessionsToday} sessions today`}>
+        {Array.from({ length: 8 }, (_, i) => (
+          <span
+            key={i}
+            className={`w-2 h-2 rounded-full transition-colors ${
+              i < sessionsToday ? "bg-qm-teal" : "bg-white/15"
+            }`}
+          />
+        ))}
+      </div>
 
-          <select
-            value={linkedId}
-            onChange={(e) => setLinkedId(e.target.value)}
-            className="qm-btn font-pixel text-[0.55rem] px-2 py-2 max-w-full bg-qm-well"
-            aria-label="Link session to a quest"
-          >
-            <option value="">— no linked quest —</option>
-            {quests.map((q) => (
-              <option key={q.id} value={q.id}>
-                {q.identifier} · {q.title}
-              </option>
-            ))}
-          </select>
+      {/* Ring */}
+      <div className="relative w-[300px] h-[300px] sm:w-[340px] sm:h-[340px]">
+        <div className="absolute inset-3 rounded-full bg-white/[0.04] backdrop-blur-sm" />
+        <svg viewBox="0 0 300 300" className="absolute inset-0 w-full h-full -rotate-90">
+          <circle cx="150" cy="150" r={RING_R} fill="none" stroke="rgba(255,255,255,0.09)" strokeWidth="2.5" />
+          <circle
+            cx="150"
+            cy="150"
+            r={RING_R}
+            fill="none"
+            stroke={phase === "paused" ? "rgba(245,192,78,0.7)" : "rgba(61,220,151,0.75)"}
+            strokeWidth="3"
+            strokeLinecap="round"
+            strokeDasharray={RING_C}
+            strokeDashoffset={RING_C * (1 - frac)}
+            className="transition-[stroke-dashoffset] duration-300 ease-linear"
+            style={phase === "running" ? { filter: "drop-shadow(0 0 6px rgba(61,220,151,0.6))" } : undefined}
+          />
+        </svg>
+        <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
+          <span className="font-mono text-[3.6rem] sm:text-[4.2rem] leading-none font-semibold text-qm-bright tabular-nums">
+            {mm}:{ss}
+          </span>
+          <span className="text-[0.72rem] tracking-[0.3em] text-qm-dim uppercase">
+            {phase === "paused" ? "Paused" : "Focus Session"}
+          </span>
+        </div>
+      </div>
 
-          <button onClick={start} className="qm-btn qm-btn-primary font-pixel text-[0.7rem] px-6 py-3">
-            ▶ START
+      {/* Controls */}
+      <div className="flex items-center gap-4">
+        {phase === "idle" && (
+          <button onClick={start} className="qm-pill qm-pill-primary px-8 py-3 text-[1.05rem] font-medium">
+            <span className="mr-2 text-[0.8rem]">▶</span> Start
           </button>
-          <p className="font-pixel text-[0.5rem] text-qm-dim text-center leading-relaxed">
-            reward: {reward} XP
-            {linkedId !== "" && ` (incl. +${Math.round(LINKED_SESSION_BONUS * 100)}% link bonus)`}
-          </p>
-        </>
-      ) : (
-        <>
-          {linkedQuest && (
-            <p className="font-pixel text-[0.55rem] text-qm-teal text-center leading-relaxed">
-              on quest: {linkedQuest.title}
-            </p>
-          )}
-          <div className="flex gap-3">
-            {phase === "running" ? (
-              <button onClick={pause} className="qm-btn font-pixel text-[0.6rem] px-4 py-2.5">
-                ❚❚ PAUSE
-              </button>
-            ) : (
-              <button onClick={resume} className="qm-btn qm-btn-primary font-pixel text-[0.6rem] px-4 py-2.5">
-                ▶ RESUME
-              </button>
-            )}
+        )}
+        {phase === "running" && (
+          <button onClick={pause} className="qm-pill px-8 py-3 text-[1.05rem] font-medium">
+            ❚❚ Pause
+          </button>
+        )}
+        {phase === "paused" && (
+          <button onClick={resume} className="qm-pill qm-pill-primary px-8 py-3 text-[1.05rem] font-medium">
+            <span className="mr-2 text-[0.8rem]">▶</span> Resume
+          </button>
+        )}
+        {phase !== "idle" && (
+          <button
+            onClick={abandon}
+            title="Abandon session (pays nothing)"
+            className="qm-round-btn"
+            aria-label="Abandon session"
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+              <path d="M3 12a9 9 0 1 0 3-6.7" />
+              <path d="M3 4v5h5" />
+            </svg>
+          </button>
+        )}
+      </div>
+
+      {/* Duration presets */}
+      {phase === "idle" ? (
+        <div className="flex items-center gap-2 flex-wrap justify-center">
+          {PRESETS.map((p) => (
             <button
-              onClick={abandon}
-              className="qm-btn qm-btn-danger font-pixel text-[0.6rem] px-4 py-2.5"
+              key={p}
+              onClick={() => setDurationMin(p)}
+              className={`qm-chip ${durationMin === p ? "qm-chip-active" : ""}`}
             >
-              ✕ ABANDON
+              {p}m
             </button>
-          </div>
-          <p className="font-pixel text-[0.5rem] text-qm-dim text-center leading-relaxed">
-            {phase === "paused"
-              ? `paused — budget ${Math.round(pauseBudgetMs / 60_000)} min, then the run is lost`
-              : "abandoning pays nothing"}
-          </p>
-        </>
+          ))}
+          <input
+            type="number"
+            min={MIN_SESSION_MIN}
+            max={MAX_SESSION_MIN}
+            value={durationMin}
+            onChange={(e) =>
+              setDurationMin(
+                Math.max(MIN_SESSION_MIN, Math.min(MAX_SESSION_MIN, Number(e.target.value) || MIN_SESSION_MIN))
+              )
+            }
+            className="qm-chip w-16 text-center bg-transparent outline-none"
+            aria-label="Custom minutes"
+          />
+        </div>
+      ) : (
+        <p className="text-[0.78rem] text-qm-dim">
+          {phase === "paused"
+            ? `Pause budget: ${Math.round(pauseBudgetMs / 60_000)} min, then the run is lost`
+            : "Abandoning pays nothing"}
+        </p>
+      )}
+
+      {phase === "idle" && (
+        <p className="text-[0.78rem] text-qm-dim">
+          Reward: {reward} XP
+          {linkedId !== "" && ` · includes +${Math.round(LINKED_SESSION_BONUS * 100)}% quest bonus`}
+        </p>
       )}
     </section>
   )

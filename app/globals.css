@@ -31,16 +31,13 @@
   --font-body: var(--font-body);
   --font-mono: var(--font-mono);
 
-  /* Quest Mode palette — deep-night RPG, scoped by qm- utilities */
-  --color-qm-bg: #16132b;
-  --color-qm-card: #221d42;
-  --color-qm-well: #1a1635;
-  --color-qm-line: #3b3370;
-  --color-qm-bright: #eae6ff;
-  --color-qm-dim: #8d86b8;
-  --color-qm-gold: #f0b429;
-  --color-qm-teal: #38c7a2;
-  --color-qm-danger: #e0556c;
+  /* Quest Mode palette — ambient forest-dark, scoped by qm- utilities */
+  --color-qm-bg: #0a100b;
+  --color-qm-bright: #edf3ed;
+  --color-qm-dim: #8fa398;
+  --color-qm-gold: #f5c04e;
+  --color-qm-teal: #3ddc97;
+  --color-qm-danger: #f87171;
 }
 
 body {
@@ -60,86 +57,99 @@ body {
   font-size: 0.6875rem;
 }
 
-/* ── Quest Mode (/quests) ────────────────────────────────────── */
-
-.font-pixel {
-  font-family: var(--font-pixel), var(--font-mono), monospace;
-}
+/* ── Quest Mode (/quests) — ambient glass over forest-dark ───── */
 
 .qm-page {
-  background-color: var(--color-qm-bg);
+  font-family: var(--font-ui), system-ui, sans-serif;
   color: var(--color-qm-bright);
-  background-image: radial-gradient(#2a2450 1px, transparent 1px);
-  background-size: 26px 26px;
+  background-color: var(--color-qm-bg);
+  /* Blurred-forest bokeh, painted with gradients so no image asset is needed */
+  background-image:
+    radial-gradient(42rem 30rem at 18% 22%, rgba(46, 94, 52, 0.5), transparent 65%),
+    radial-gradient(36rem 28rem at 82% 30%, rgba(28, 74, 48, 0.45), transparent 65%),
+    radial-gradient(40rem 34rem at 55% 78%, rgba(52, 84, 38, 0.35), transparent 65%),
+    radial-gradient(24rem 20rem at 40% 45%, rgba(20, 56, 36, 0.5), transparent 70%),
+    radial-gradient(120rem 80rem at 50% 50%, transparent 40%, rgba(0, 0, 0, 0.55));
+  background-attachment: fixed;
 }
 
-.qm-card {
-  background-color: var(--color-qm-card);
-  border: 2px solid var(--color-qm-line);
-  box-shadow: 5px 5px 0 rgba(0, 0, 0, 0.35);
+.qm-glass {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  backdrop-filter: blur(14px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
 }
 
-.qm-btn {
-  border: 2px solid var(--color-qm-line);
+.qm-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(10px);
   color: var(--color-qm-bright);
   cursor: pointer;
-  transition: transform 80ms ease, box-shadow 80ms ease, border-color 120ms ease;
+  transition: background 140ms ease, border-color 140ms ease, box-shadow 200ms ease;
 }
-.qm-btn:hover {
-  border-color: var(--color-qm-dim);
-  transform: translate(-1px, -1px);
-  box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.35);
+.qm-pill:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.22);
 }
-.qm-btn:active {
-  transform: translate(1px, 1px);
-  box-shadow: none;
-}
-.qm-btn-active,
-.qm-btn-primary {
-  border-color: var(--color-qm-teal);
+.qm-pill-primary {
+  background: rgba(61, 220, 151, 0.12);
+  border-color: rgba(61, 220, 151, 0.4);
   color: var(--color-qm-teal);
 }
-.qm-btn-danger:hover {
-  border-color: var(--color-qm-danger);
-  color: var(--color-qm-danger);
+.qm-pill-primary:hover {
+  background: rgba(61, 220, 151, 0.2);
+  border-color: rgba(61, 220, 151, 0.6);
+  box-shadow: 0 0 24px rgba(61, 220, 151, 0.25);
 }
 
-.qm-title-glow {
-  text-shadow: 0 0 18px rgba(139, 108, 255, 0.45);
+.qm-round-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 9999px;
+  background: rgba(147, 100, 235, 0.15);
+  border: 1px solid rgba(147, 100, 235, 0.35);
+  color: #b79bf0;
+  cursor: pointer;
+  transition: background 140ms ease, box-shadow 200ms ease;
+}
+.qm-round-btn:hover {
+  background: rgba(147, 100, 235, 0.28);
+  box-shadow: 0 0 20px rgba(147, 100, 235, 0.25);
 }
 
-.qm-pulse {
-  animation: qm-pulse 2s ease-in-out infinite;
+.qm-chip {
+  border-radius: 9999px;
+  padding: 0.35rem 0.85rem;
+  font-size: 0.8rem;
+  color: var(--color-qm-dim);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  cursor: pointer;
+  transition: color 140ms ease, border-color 140ms ease, background 140ms ease;
 }
-@keyframes qm-pulse {
-  50% { opacity: 0.75; }
+.qm-chip:hover {
+  color: var(--color-qm-bright);
+  border-color: rgba(255, 255, 255, 0.25);
 }
-
-/* Hero sprite states */
-.qm-hero svg { image-rendering: pixelated; display: block; }
-.qm-hero-idle { animation: qm-bob 2.6s ease-in-out infinite; }
-.qm-hero-focusing {
-  animation: qm-float 3.2s ease-in-out infinite;
-  filter: drop-shadow(0 0 10px rgba(56, 199, 162, 0.8));
-}
-.qm-hero-victory { animation: qm-jump 0.55s ease-in-out infinite; }
-
-@keyframes qm-bob {
-  50% { transform: translateY(2px); }
-}
-@keyframes qm-float {
-  50% { transform: translateY(-4px); }
-}
-@keyframes qm-jump {
-  30% { transform: translateY(-9px) scale(1.05); }
-  60% { transform: translateY(0) scale(0.98); }
+.qm-chip-active {
+  color: var(--color-qm-teal);
+  border-color: rgba(61, 220, 151, 0.45);
+  background: rgba(61, 220, 151, 0.1);
 }
 
 /* XP toast */
 .qm-toast {
-  background-color: var(--color-qm-card);
-  border: 2px solid var(--color-qm-gold);
-  box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.4);
+  background: rgba(20, 28, 20, 0.85);
+  border: 1px solid rgba(245, 192, 78, 0.35);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
   animation: qm-toast-in 220ms ease-out;
 }
 @keyframes qm-toast-in {
@@ -148,7 +158,8 @@ body {
 
 /* Level-up moment */
 .qm-levelup-bg {
-  background: rgba(12, 9, 28, 0.82);
+  background: rgba(5, 10, 6, 0.75);
+  backdrop-filter: blur(6px);
   animation: qm-fade-in 200ms ease-out;
 }
 .qm-levelup {

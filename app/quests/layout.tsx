@@ -1,10 +1,9 @@
 import type { Metadata } from "next"
-import { Press_Start_2P } from "next/font/google"
+import { Inter } from "next/font/google"
 
-const pressStart = Press_Start_2P({
-  weight: "400",
+const inter = Inter({
   subsets: ["latin"],
-  variable: "--font-pixel",
+  variable: "--font-ui",
 })
 
 export const metadata: Metadata = {
@@ -13,5 +12,5 @@ export const metadata: Metadata = {
 }
 
 export default function QuestsLayout({ children }: { children: React.ReactNode }) {
-  return <div className={pressStart.variable}>{children}</div>
+  return <div className={inter.variable}>{children}</div>
 }

@@ -17,4 +17,9 @@ export interface QuestStore {
   tierOverrides: Record<string, Tier>
   sessionsCompleted: number
   minutesFocused: number
+  /** Consecutive days with at least one completed session */
+  streakDays: number
+  sessionsToday: number
+  /** Local date (YYYY-MM-DD) of the last completed session */
+  lastSessionDate: string | null
 }

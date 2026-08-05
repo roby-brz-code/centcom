@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { Tier, QuestStore } from "@/types/quest"
+import { localDate, yesterdayDate } from "@/lib/dates"
 
 const KEY = "quest-state-v1"
 
@@ -11,6 +12,9 @@ const EMPTY: QuestStore = {
   tierOverrides: {},
   sessionsCompleted: 0,
   minutesFocused: 0,
+  streakDays: 0,
+  sessionsToday: 0,
+  lastSessionDate: null,
 }
 
 export function useQuestState() {
@@ -35,13 +39,20 @@ export function useQuestState() {
   return {
     store,
     hydrated,
-    addSessionXp: (xp: number, minutes: number) =>
+    addSessionXp: (xp: number, minutes: number) => {
+      const today = localDate()
+      const sameDay = store.lastSessionDate === today
+      const continues = store.lastSessionDate === yesterdayDate()
       persist({
         ...store,
         xp: store.xp + xp,
         sessionsCompleted: store.sessionsCompleted + 1,
         minutesFocused: store.minutesFocused + minutes,
-      }),
+        sessionsToday: sameDay ? store.sessionsToday + 1 : 1,
+        streakDays: sameDay ? store.streakDays : continues ? store.streakDays + 1 : 1,
+        lastSessionDate: today,
+      })
+    },
     completeQuest: (id: string, xp: number) => {
       if (store.completedQuestIds.includes(id)) return
       persist({

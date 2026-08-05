@@ -18,56 +18,55 @@ export default function QuestLog({
   const done = quests.filter((q) => completedIds.includes(q.id))
 
   return (
-    <section className="qm-card p-5 sm:p-7">
-      <div className="flex items-baseline justify-between">
-        <h2 className="font-pixel text-[0.65rem] text-qm-gold tracking-wider">⚔ QUEST LOG</h2>
-        <span className="font-pixel text-[0.5rem] text-qm-dim">demo · linear soon</span>
+    <section className="w-full">
+      <div className="flex items-baseline justify-between mb-4 px-1">
+        <h2 className="text-[0.8rem] tracking-[0.25em] uppercase text-qm-dim">Quest Log</h2>
+        <span className="text-[0.72rem] text-qm-dim/70">demo · Linear soon</span>
       </div>
 
-      <ul className="mt-4 space-y-2.5">
+      <div className="grid gap-3 sm:grid-cols-2">
         {open.map((q) => (
-          <li key={q.id} className="border-2 border-qm-line bg-qm-well px-3 py-2.5">
-            <div className="flex items-center gap-2.5">
+          <div key={q.id} className="qm-glass rounded-2xl p-4 flex flex-col gap-3">
+            <div className="flex items-center justify-between gap-2">
               <button
                 onClick={() => onToggleTier(q.id, q.tier === "main" ? "side" : "main")}
                 title="Toggle Side ↔ Main"
-                className={`font-pixel text-[0.45rem] px-1.5 py-1 border-2 shrink-0 cursor-pointer transition-colors ${
+                className={`text-[0.66rem] font-semibold tracking-wide uppercase px-2.5 py-1 rounded-full border transition-colors cursor-pointer ${
                   q.tier === "main"
-                    ? "border-qm-gold text-qm-gold hover:bg-qm-gold/10"
-                    : "border-qm-line text-qm-dim hover:border-qm-dim"
+                    ? "border-qm-gold/50 text-qm-gold bg-qm-gold/10 hover:bg-qm-gold/20"
+                    : "border-white/15 text-qm-dim hover:border-white/30"
                 }`}
               >
-                {q.tier === "main" ? "★ MAIN" : "· SIDE"}
+                {q.tier === "main" ? "★ Main" : "Side"}
               </button>
-              <div className="flex-1 min-w-0">
-                <p className="font-pixel text-[0.55rem] text-qm-bright leading-relaxed truncate">
-                  {q.title}
-                </p>
-                <p className="font-pixel text-[0.45rem] text-qm-dim mt-0.5">
-                  {q.identifier} · {TIER_XP[q.tier]} XP
-                </p>
-              </div>
+              <span className="text-[0.72rem] text-qm-dim tabular-nums">{TIER_XP[q.tier]} XP</span>
+            </div>
+            <p className="text-[0.95rem] font-medium text-qm-bright leading-snug flex-1">
+              {q.title}
+            </p>
+            <div className="flex items-center justify-between">
+              <span className="text-[0.72rem] text-qm-dim">{q.identifier}</span>
               <button
                 onClick={() => onComplete(q)}
                 title="Mark done (demo — Linear will drive this)"
-                className="qm-btn font-pixel text-[0.5rem] px-2 py-1.5 shrink-0"
+                className="qm-pill px-3.5 py-1.5 text-[0.78rem] font-medium text-qm-teal"
               >
-                ✓
+                ✓ Done
               </button>
             </div>
-          </li>
+          </div>
         ))}
         {open.length === 0 && (
-          <li className="font-pixel text-[0.55rem] text-qm-dim text-center py-6">
-            quest log clear — go touch grass
-          </li>
+          <div className="qm-glass rounded-2xl p-6 text-center text-[0.85rem] text-qm-dim sm:col-span-2">
+            Quest log clear — go touch grass 🌿
+          </div>
         )}
-      </ul>
+      </div>
 
       {done.length > 0 && (
-        <ul className="mt-4 pt-3 border-t-2 border-qm-line space-y-1.5">
+        <ul className="mt-5 space-y-1.5 px-1">
           {done.map((q) => (
-            <li key={q.id} className="font-pixel text-[0.5rem] text-qm-dim line-through px-1">
+            <li key={q.id} className="text-[0.78rem] text-qm-dim/70 line-through">
               {q.identifier} · {q.title}
             </li>
           ))}

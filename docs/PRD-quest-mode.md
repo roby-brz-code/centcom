@@ -86,10 +86,9 @@ without touching logic:
 - Level curve: **cost to reach level N = 200 × (N − 1) XP**, cumulative (level 2 at
   200 XP, level 3 at 600 XP, level 4 at 1,200 XP…). Early levels come fast, later ones
   slow down naturally.
-- The character is a single pixel-art sprite with three states:
-  - **Idle** — default breathing/blinking loop.
-  - **Focusing** — shown while a timer session runs (e.g., meditating, glowing aura).
-  - **Victory** — a short celebration animation on XP payout / level-up.
+- Progress is embodied by the HUD rather than a character sprite: a level badge,
+  an XP bar, a day-streak counter, and per-day session dots. The timer ring glows
+  while a session runs.
 - Level-ups trigger a full-screen-ish moment (flash + fanfare text). This is the
   dopamine hit the whole product exists for; it should feel disproportionate.
 
@@ -115,9 +114,11 @@ without touching logic:
   promote/demote Side ↔ Main; completed quests briefly show with a strikethrough +
   "+400 XP" toast before leaving the log.
 
-Visual style: pixel/retro (bitmap-style font for numbers, chunky XP bar) but on the
-existing centcom Tailwind base — a themed page, not a game engine. No canvas/WebGL;
-the sprite is an animated PNG/GIF or CSS sprite-sheet animation.
+Visual style: ambient glass over a dark, blurred-forest backdrop — clean sans-serif
+type, mono digits for the countdown, a circular progress ring around the timer, and
+frosted-glass pills and cards. Quests render as rectangular glass cards in a grid.
+Built on the existing centcom Tailwind base — a themed page, not a game engine; the
+backdrop is painted with CSS gradients so no image assets are needed.
 
 ## 6. Technical approach
 
