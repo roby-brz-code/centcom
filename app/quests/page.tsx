@@ -10,6 +10,8 @@ import { localDate } from "@/lib/dates"
 import Hud from "@/app/components/quest/Hud"
 import FocusTimer from "@/app/components/quest/FocusTimer"
 import QuestLog from "@/app/components/quest/QuestLog"
+import StatsPanel from "@/app/components/quest/StatsPanel"
+import { HeroState } from "@/app/components/quest/PixelHero"
 
 interface Toast {
   id: number
@@ -18,7 +20,8 @@ interface Toast {
 
 export default function QuestsPage() {
   const { store, hydrated, addSessionXp, completeQuest, setTier, reset } = useQuestState()
-  const [, setFocusing] = useState(false)
+  const [focusing, setFocusing] = useState(false)
+  const [celebrating, setCelebrating] = useState(false)
   const [toasts, setToasts] = useState<Toast[]>([])
   const [levelUp, setLevelUp] = useState<number | null>(null)
   const toastId = useRef(0)
@@ -49,17 +52,26 @@ export default function QuestsPage() {
     setTimeout(() => setToasts((t) => t.filter((x) => x.id !== id)), 2600)
   }
 
+  function celebrate() {
+    setCelebrating(true)
+    setTimeout(() => setCelebrating(false), 2200)
+  }
+
   function handleSessionComplete(durationMin: number, linkedQuest: Quest | null) {
     const xp = sessionXp(durationMin, linkedQuest !== null)
     addSessionXp(xp, durationMin)
     pushToast(`+${xp} XP · focus session`)
+    celebrate()
   }
 
   function handleQuestComplete(quest: Quest) {
     const xp = questXp(quest.tier)
     completeQuest(quest.id, xp)
     pushToast(`+${xp} XP · ${quest.identifier} done`)
+    celebrate()
   }
+
+  const heroState: HeroState = celebrating ? "victory" : focusing ? "focusing" : "idle"
 
   return (
     <div className="qm-page min-h-screen">
@@ -80,7 +92,9 @@ export default function QuestsPage() {
           </button>
         </nav>
 
-        <Hud store={store} />
+        <div className="mt-3">
+          <Hud store={store} heroState={heroState} />
+        </div>
 
         <div className="mt-10 sm:mt-14">
           <FocusTimer
@@ -101,6 +115,10 @@ export default function QuestsPage() {
           onToggleTier={(id: string, tier: Tier) => setTier(id, tier)}
           onComplete={handleQuestComplete}
         />
+
+        <div className="mt-12">
+          <StatsPanel store={store} />
+        </div>
       </div>
 
       {/* XP toasts */}

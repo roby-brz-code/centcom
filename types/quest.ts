@@ -9,6 +9,13 @@ export interface Quest {
   url?: string
 }
 
+export interface DayEntry {
+  sessions: number
+  minutes: number
+  xp: number
+  quests: number
+}
+
 export interface QuestStore {
   xp: number
   /** Quest ids already paid out — a Done quest can never pay twice */
@@ -19,7 +26,10 @@ export interface QuestStore {
   minutesFocused: number
   /** Consecutive days with at least one completed session */
   streakDays: number
+  bestStreak: number
   sessionsToday: number
   /** Local date (YYYY-MM-DD) of the last completed session */
   lastSessionDate: string | null
+  /** Per-day activity, keyed by local date (YYYY-MM-DD) — feeds statistics */
+  dayLog: Record<string, DayEntry>
 }

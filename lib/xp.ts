@@ -34,6 +34,28 @@ export function levelProgress(xp: number): {
   return { level, into: xp - floor, toNext: totalXpForLevel(level + 1) - floor }
 }
 
+// ── Ranks ─────────────────────────────────────────────────────────
+// Named tiers over the level curve — the "class" shown next to the hero.
+
+const RANKS: [number, string][] = [
+  [16, "Legend"],
+  [12, "Champion"],
+  [8, "Knight"],
+  [5, "Adventurer"],
+  [3, "Apprentice"],
+  [1, "Novice"],
+]
+
+export function rankForLevel(level: number): string {
+  return RANKS.find(([min]) => level >= min)![1]
+}
+
+/** Next rank and the level it unlocks at, or null at the top */
+export function nextRank(level: number): { name: string; level: number } | null {
+  const above = RANKS.filter(([min]) => min > level).pop()
+  return above ? { name: above[1], level: above[0] } : null
+}
+
 // ── Payouts ───────────────────────────────────────────────────────
 
 export function sessionXp(durationMin: number, linkedToQuest: boolean): number {
