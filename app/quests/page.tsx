@@ -2,13 +2,13 @@
 
 import { useEffect, useRef, useState } from "react"
 import Link from "next/link"
-import demoData from "@/data/quests-demo.json"
 import { Quest, Tier } from "@/types/quest"
 import { levelFromXp, questXp, sessionXp } from "@/lib/xp"
 import { rollLoot } from "@/lib/loot"
 import { GearItem, THEMES, themeById } from "@/lib/gear"
 import Armory from "@/app/components/quest/Armory"
 import { useQuestState } from "@/app/hooks/useQuestState"
+import { useLinearQuests } from "@/app/hooks/useLinearQuests"
 import { localDate } from "@/lib/dates"
 import Hud from "@/app/components/quest/Hud"
 import FocusTimer from "@/app/components/quest/FocusTimer"
@@ -34,14 +34,16 @@ export default function QuestsPage() {
   const {
     store,
     hydrated,
+    authEnabled,
     addSessionXp,
-    completeQuest,
+    completeQuests,
     buyGear,
     toggleEquip,
     setTheme,
     setTier,
     reset,
   } = useQuestState()
+  const board = useLinearQuests()
   const [tab, setTab] = useState<Tab>("quests")
   const [focusing, setFocusing] = useState(false)
   const [celebrating, setCelebrating] = useState(false)
@@ -52,10 +54,14 @@ export default function QuestsPage() {
   const toastId = useRef(0)
   const prevLevel = useRef<number | null>(null)
 
-  const quests: Quest[] = (demoData.quests as Quest[]).map((q) => ({
+  const withOverrides = (q: Quest): Quest => ({
     ...q,
     tier: store.tierOverrides[q.id] ?? q.tier,
-  }))
+  })
+  const quests: Quest[] = [
+    ...board.open.map(withOverrides),
+    ...board.completed.filter((c) => !board.open.some((o) => o.id === c.id)).map(withOverrides),
+  ]
   const openQuests = quests.filter((q) => !store.completedQuestIds.includes(q.id))
   const sessionsToday = store.lastSessionDate === localDate() ? store.sessionsToday : 0
   const heroEquipment = Object.values(store.equippedGear).filter(Boolean) as string[]
@@ -105,12 +111,36 @@ export default function QuestsPage() {
     celebrate()
   }
 
+  // Demo mode only — with Linear connected, moving the issue to Done pays out
   function handleQuestComplete(quest: Quest) {
     const xp = questXp(quest.tier)
     const gold = dropLoot(quest.tier)
-    completeQuest(quest.id, xp, gold)
+    completeQuests([{ id: quest.id, xp, gold }])
     pushToast(`+${xp} XP · ${quest.identifier} done`)
     celebrate()
+  }
+
+  // Pay out issues Linear reports as Done that haven't been paid yet
+  useEffect(() => {
+    if (!hydrated || !board.loaded) return
+    const fresh = board.completed
+      .map(withOverrides)
+      .filter((q) => !store.completedQuestIds.includes(q.id))
+    if (fresh.length === 0) return
+    const payouts = fresh.map((q) => {
+      const xp = questXp(q.tier)
+      const gold = dropLoot(q.tier)
+      pushToast(`+${xp} XP · ${q.identifier} done`)
+      return { id: q.id, xp, gold }
+    })
+    completeQuests(payouts)
+    celebrate()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [hydrated, board.loaded, board.completed, store.completedQuestIds])
+
+  async function logout() {
+    await fetch("/api/quest/login", { method: "DELETE" }).catch(() => {})
+    window.location.href = "/quests/login"
   }
 
   function handleBuyGear(item: GearItem) {
@@ -138,13 +168,23 @@ export default function QuestsPage() {
           >
             ← centcom
           </Link>
-          <button
-            onClick={reset}
-            className="text-[0.75rem] text-qm-dim/70 hover:text-qm-danger transition-colors cursor-pointer"
-            title="Reset demo progress"
-          >
-            reset demo
-          </button>
+          <span className="flex items-center gap-4">
+            <button
+              onClick={reset}
+              className="text-[0.75rem] text-qm-dim/70 hover:text-qm-danger transition-colors cursor-pointer"
+              title="Reset progress"
+            >
+              reset
+            </button>
+            {authEnabled && (
+              <button
+                onClick={logout}
+                className="text-[0.75rem] text-qm-dim/70 hover:text-qm-bright transition-colors cursor-pointer"
+              >
+                log out
+              </button>
+            )}
+          </span>
         </nav>
 
         <div className="mt-3">
@@ -169,12 +209,19 @@ export default function QuestsPage() {
 
         {/* Panels — all stay mounted so a running timer survives tab switches */}
         <div className={`mt-9 ${tab === "quests" ? "" : "hidden"}`}>
-          <QuestLog
-            quests={quests}
-            completedIds={store.completedQuestIds}
-            onToggleTier={(id: string, tier: Tier) => setTier(id, tier)}
-            onComplete={handleQuestComplete}
-          />
+          {board.loaded ? (
+            <QuestLog
+              quests={quests}
+              completedIds={store.completedQuestIds}
+              source={board.source}
+              onToggleTier={(id: string, tier: Tier) => setTier(id, tier)}
+              onComplete={handleQuestComplete}
+            />
+          ) : (
+            <div className="qm-panel p-8 text-center text-[0.85rem] text-qm-dim">
+              Summoning quests…
+            </div>
+          )}
         </div>
 
         <div className={`mt-9 ${tab === "focus" ? "" : "hidden"}`}>
@@ -203,7 +250,11 @@ export default function QuestsPage() {
         </div>
 
         <p className="text-[0.7rem] tracking-[0.35em] uppercase text-qm-dim/50 text-center mt-14">
-          Quest Mode · demo — Linear integration lands in M2
+          {board.source === "linear"
+            ? "Quest Mode · synced with Linear"
+            : board.source === "error"
+              ? "Quest Mode · Linear unreachable — retrying"
+              : "Quest Mode · demo quests — set LINEAR_API_KEY to go live"}
         </p>
       </div>
 

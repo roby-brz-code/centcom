@@ -1,11 +1,16 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { Tier, QuestStore, DayEntry } from "@/types/quest"
 import { localDate, yesterdayDate } from "@/lib/dates"
 import { GearItem } from "@/lib/gear"
 
+// Server-persisted quest state: the API (data/quest-store.json behind
+// passphrase auth) is the source of truth; localStorage is kept as a
+// cache and offline fallback, and pre-server state migrates up once.
+
 const KEY = "quest-state-v1"
+const SAVE_DEBOUNCE_MS = 600
 
 const EMPTY: QuestStore = {
   xp: 0,
@@ -25,36 +30,90 @@ const EMPTY: QuestStore = {
   theme: "midnight",
 }
 
-const EMPTY_DAY: DayEntry = { sessions: 0, minutes: 0, xp: 0, quests: 0 }
+export interface QuestPayout {
+  id: string
+  xp: number
+  gold: number
+}
+
+function readLocal(): QuestStore | null {
+  try {
+    const raw = localStorage.getItem(KEY)
+    return raw ? { ...EMPTY, ...JSON.parse(raw) } : null
+  } catch {
+    return null
+  }
+}
 
 export function useQuestState() {
   const [store, setStore] = useState<QuestStore>(EMPTY)
   const [hydrated, setHydrated] = useState(false)
+  const [authEnabled, setAuthEnabled] = useState(false)
+  const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   useEffect(() => {
-    try {
-      const raw = localStorage.getItem(KEY)
-      if (raw) setStore({ ...EMPTY, ...JSON.parse(raw) })
-    } catch {}
-    setHydrated(true)
+    let cancelled = false
+    ;(async () => {
+      try {
+        const res = await fetch("/api/quest/state")
+        if (res.status === 401) {
+          window.location.href = "/quests/login"
+          return
+        }
+        const data = await res.json()
+        if (cancelled) return
+        setAuthEnabled(Boolean(data.auth))
+        if (data.store) {
+          setStore({ ...EMPTY, ...data.store })
+        } else {
+          // First run against the server — adopt any pre-server local state
+          const local = readLocal()
+          if (local) {
+            setStore(local)
+            void fetch("/api/quest/state", {
+              method: "PUT",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(local),
+            }).catch(() => {})
+          }
+        }
+      } catch {
+        // Server unreachable — run on the local cache
+        const local = readLocal()
+        if (local && !cancelled) setStore(local)
+      }
+      if (!cancelled) setHydrated(true)
+    })()
+    return () => {
+      cancelled = true
+    }
   }, [])
 
   function persist(next: QuestStore) {
+    setStore(next)
     try {
       localStorage.setItem(KEY, JSON.stringify(next))
     } catch {}
-    setStore(next)
+    if (saveTimer.current) clearTimeout(saveTimer.current)
+    saveTimer.current = setTimeout(() => {
+      fetch("/api/quest/state", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(next),
+      }).catch(() => {})
+    }, SAVE_DEBOUNCE_MS)
   }
 
   return {
     store,
     hydrated,
+    authEnabled,
     addSessionXp: (xp: number, minutes: number, gold: number) => {
       const today = localDate()
       const sameDay = store.lastSessionDate === today
       const continues = store.lastSessionDate === yesterdayDate()
       const streakDays = sameDay ? store.streakDays : continues ? store.streakDays + 1 : 1
-      const day = store.dayLog[today] ?? EMPTY_DAY
+      const day = store.dayLog[today] ?? { sessions: 0, minutes: 0, xp: 0, quests: 0 }
       persist({
         ...store,
         xp: store.xp + xp,
@@ -77,19 +136,23 @@ export function useQuestState() {
         },
       })
     },
-    completeQuest: (id: string, xp: number, gold: number) => {
-      if (store.completedQuestIds.includes(id)) return
+    /** Pay out one or more completed quests in a single store update */
+    completeQuests: (payouts: QuestPayout[]) => {
+      const fresh = payouts.filter((p) => !store.completedQuestIds.includes(p.id))
+      if (fresh.length === 0) return
       const today = localDate()
-      const day = store.dayLog[today] ?? EMPTY_DAY
+      const day: DayEntry = store.dayLog[today] ?? { sessions: 0, minutes: 0, xp: 0, quests: 0 }
+      const xp = fresh.reduce((s, p) => s + p.xp, 0)
+      const gold = fresh.reduce((s, p) => s + p.gold, 0)
       persist({
         ...store,
         xp: store.xp + xp,
         gold: store.gold + gold,
         goldEarned: store.goldEarned + gold,
-        completedQuestIds: [...store.completedQuestIds, id],
+        completedQuestIds: [...store.completedQuestIds, ...fresh.map((p) => p.id)],
         dayLog: {
           ...store.dayLog,
-          [today]: { ...day, xp: day.xp + xp, quests: day.quests + 1 },
+          [today]: { ...day, xp: day.xp + xp, quests: day.quests + fresh.length },
         },
       })
     },

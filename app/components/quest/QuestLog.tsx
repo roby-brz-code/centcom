@@ -6,11 +6,13 @@ import { TIER_XP } from "@/lib/xp"
 export default function QuestLog({
   quests,
   completedIds,
+  source,
   onToggleTier,
   onComplete,
 }: {
   quests: Quest[]
   completedIds: string[]
+  source: "linear" | "demo" | "error"
   onToggleTier: (id: string, tier: Tier) => void
   onComplete: (quest: Quest) => void
 }) {
@@ -21,7 +23,9 @@ export default function QuestLog({
     <section className="w-full">
       <div className="flex items-baseline justify-between mb-5 px-1">
         <h2 className="text-[0.8rem] tracking-[0.25em] uppercase text-qm-dim">Quest Log</h2>
-        <span className="text-[0.72rem] text-qm-dim/70">demo · Linear soon</span>
+        <span className="text-[0.72rem] text-qm-dim/70">
+          {source === "linear" ? "⚡ synced from Linear" : "demo quests"}
+        </span>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2">
@@ -50,21 +54,38 @@ export default function QuestLog({
               </button>
             </div>
 
-            <p className="font-display font-semibold text-[1.1rem] leading-snug text-qm-ink flex-1">
-              {q.title}
-            </p>
+            {q.url ? (
+              <a
+                href={q.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-display font-semibold text-[1.1rem] leading-snug text-qm-ink flex-1 hover:underline decoration-qm-ink/40 underline-offset-2"
+              >
+                {q.title}
+              </a>
+            ) : (
+              <p className="font-display font-semibold text-[1.1rem] leading-snug text-qm-ink flex-1">
+                {q.title}
+              </p>
+            )}
 
             <div className="flex items-center justify-between">
               <span className="text-[0.7rem] font-semibold tracking-wider uppercase text-qm-ink/50">
                 {q.identifier}
               </span>
-              <button
-                onClick={() => onComplete(q)}
-                title="Mark done (demo — Linear will drive this)"
-                className="text-[0.78rem] font-semibold px-3.5 py-1.5 rounded-full bg-[#2b2c4e] text-[#f3ecd8] hover:bg-[#3a3b63] transition-colors cursor-pointer"
-              >
-                ✓ Done
-              </button>
+              {source === "linear" ? (
+                <span className="text-[0.66rem] font-semibold tracking-wider uppercase text-qm-ink/40">
+                  done in Linear pays out
+                </span>
+              ) : (
+                <button
+                  onClick={() => onComplete(q)}
+                  title="Mark done (demo — Linear drives this when connected)"
+                  className="text-[0.78rem] font-semibold px-3.5 py-1.5 rounded-full bg-[#2b2c4e] text-[#f3ecd8] hover:bg-[#3a3b63] transition-colors cursor-pointer"
+                >
+                  ✓ Done
+                </button>
+              )}
             </div>
           </div>
         ))}

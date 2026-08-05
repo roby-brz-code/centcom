@@ -140,18 +140,24 @@ backdrop is painted with CSS gradients so no image assets are needed.
 - **Where:** new route `app/quests/page.tsx` in centcom, plus components under
   `app/components/quest/`. Follows existing repo conventions (Next.js 16, React 19,
   Tailwind 4 — check `node_modules/next/dist/docs/` per AGENTS.md before building).
-- **Linear integration:** a small server-side route (`app/quests/api` or a server
-  component) calling the Linear GraphQL API with a personal API key from
-  `LINEAR_API_KEY` env var. Reads: my assigned open issues (id, title, state, labels,
-  url). Optional write: apply/remove the `quest:main` label. (The Linear MCP connector
-  is great for chat-driven workflows, but the app needs its own key so the page works
-  standalone in the browser.)
-- **State:** a local JSON store (`data/quest-state.json`, matching the existing
-  `data/brief.json` pattern) read/written via a route handler. Holds: total XP, session
-  history, and the set of issue IDs already paid out (so a Done issue can't pay twice).
-  Single-user, no auth, no database.
-- **Completion detection:** on load and every ~5 min while the page is open, diff
-  Linear issue states against the paid-out set; pay XP for newly Done quests.
+- **Linear integration:** `app/api/quest/linear` calls the Linear GraphQL API with a
+  personal API key from `LINEAR_API_KEY`. Reads my assigned open issues plus issues
+  completed in the last 30 days (for payout detection). Tier comes from the
+  `quest:main` label, overridable locally. With no key set, demo quests keep the app
+  fully usable. (The Linear MCP connector is great for chat-driven workflows, but the
+  app needs its own key so the page works standalone in the browser.)
+- **Auth:** passphrase login (`QUEST_PASSWORD` env var — never in code) with signed
+  httpOnly session cookies (HMAC, 30-day expiry, constant-time comparisons). No
+  password configured = open dev mode. Single user, no accounts framework.
+- **State:** server-side JSON (`data/quest-store.json`, gitignored) behind
+  authenticated routes; the browser keeps a localStorage cache for instant load and
+  offline fallback, and pre-server state migrates up automatically. Holds XP, gold,
+  gear, theme, streaks, the day log, and the set of issue IDs already paid out (so a
+  Done issue can't pay twice). Single-user, no database — note: file storage assumes
+  a persistent server, not serverless.
+- **Completion detection:** on load and every 5 min while the page is open, diff
+  Linear's recently-completed issues against the paid-out set; pay XP + loot for
+  newly Done quests.
 - **Timer integrity:** timestamps, not tick-counting — store session start/end so a
   backgrounded tab still resolves correctly. All XP math lives in one pure module with
   unit tests (`lib/xp.ts`).
