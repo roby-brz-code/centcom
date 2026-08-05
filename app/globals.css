@@ -66,6 +66,7 @@ body {
   background: linear-gradient(180deg, #0d1330 0%, #0b1026 45%, #090c1e 100%);
   background-attachment: fixed;
   position: relative;
+  isolation: isolate;
 }
 
 /* Star field */
@@ -73,6 +74,7 @@ body {
   content: "";
   position: fixed;
   inset: 0;
+  z-index: -1;
   pointer-events: none;
   background-image:
     radial-gradient(1.4px 1.4px at 8% 12%, rgba(255,255,255,0.9), transparent 100%),
@@ -101,6 +103,7 @@ body {
   content: "";
   position: fixed;
   top: 3.5rem;
+  z-index: -1;
   right: 7%;
   width: 96px;
   height: 96px;
@@ -110,11 +113,6 @@ body {
   box-shadow:
     0 0 50px 18px rgba(200, 210, 255, 0.22),
     0 0 130px 55px rgba(180, 195, 255, 0.1);
-}
-
-.qm-page > * {
-  position: relative;
-  z-index: 1;
 }
 
 /* Navy game panel */

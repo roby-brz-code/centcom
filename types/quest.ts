@@ -9,6 +9,24 @@ export interface Quest {
   url?: string
 }
 
+export interface Reward {
+  id: string
+  emoji: string
+  name: string
+  /** Price in gold */
+  cost: number
+  /** Level required before this can be bought */
+  minLevel: number
+}
+
+export interface Purchase {
+  name: string
+  emoji: string
+  cost: number
+  /** Local date (YYYY-MM-DD) */
+  date: string
+}
+
 export interface DayEntry {
   sessions: number
   minutes: number
@@ -32,4 +50,9 @@ export interface QuestStore {
   lastSessionDate: string | null
   /** Per-day activity, keyed by local date (YYYY-MM-DD) — feeds statistics */
   dayLog: Record<string, DayEntry>
+  /** Spendable loot currency (XP is progression and is never spent) */
+  gold: number
+  goldEarned: number
+  rewards: Reward[]
+  purchases: Purchase[]
 }

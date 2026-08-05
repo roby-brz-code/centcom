@@ -3,8 +3,10 @@
 import { useEffect, useRef, useState } from "react"
 import Link from "next/link"
 import demoData from "@/data/quests-demo.json"
-import { Quest, Tier } from "@/types/quest"
+import { Quest, Reward, Tier } from "@/types/quest"
 import { levelFromXp, questXp, sessionXp } from "@/lib/xp"
+import { rollLoot } from "@/lib/loot"
+import RewardShop from "@/app/components/quest/RewardShop"
 import { useQuestState } from "@/app/hooks/useQuestState"
 import { localDate } from "@/lib/dates"
 import Hud from "@/app/components/quest/Hud"
@@ -18,22 +20,34 @@ interface Toast {
   text: string
 }
 
-type Tab = "quests" | "focus" | "stats"
+type Tab = "quests" | "focus" | "shop" | "stats"
 
 const TABS: { id: Tab; label: string }[] = [
   { id: "quests", label: "⚔️ Quests" },
   { id: "focus", label: "⏳ Focus" },
+  { id: "shop", label: "🏪 Shop" },
   { id: "stats", label: "📊 Stats" },
 ]
 
 export default function QuestsPage() {
-  const { store, hydrated, addSessionXp, completeQuest, setTier, reset } = useQuestState()
+  const {
+    store,
+    hydrated,
+    addSessionXp,
+    completeQuest,
+    buyReward,
+    addReward,
+    removeReward,
+    setTier,
+    reset,
+  } = useQuestState()
   const [tab, setTab] = useState<Tab>("quests")
   const [focusing, setFocusing] = useState(false)
   const [celebrating, setCelebrating] = useState(false)
   const [clock, setClock] = useState("")
   const [toasts, setToasts] = useState<Toast[]>([])
   const [levelUp, setLevelUp] = useState<number | null>(null)
+  const [rareLoot, setRareLoot] = useState<number | null>(null)
   const toastId = useRef(0)
   const prevLevel = useRef<number | null>(null)
 
@@ -67,18 +81,38 @@ export default function QuestsPage() {
     setTimeout(() => setCelebrating(false), 2200)
   }
 
+  function dropLoot(kind: "session" | "side" | "main", minutes = 0): number {
+    const loot = rollLoot(kind, minutes)
+    if (loot.rare) {
+      setRareLoot(loot.gold)
+      setTimeout(() => setRareLoot(null), 3000)
+    } else {
+      pushToast(`🪙 +${loot.gold} gold`)
+    }
+    return loot.gold
+  }
+
   function handleSessionComplete(durationMin: number, linkedQuest: Quest | null) {
     const xp = sessionXp(durationMin, linkedQuest !== null)
-    addSessionXp(xp, durationMin)
+    const gold = dropLoot("session", durationMin)
+    addSessionXp(xp, durationMin, gold)
     pushToast(`+${xp} XP · focus session`)
     celebrate()
   }
 
   function handleQuestComplete(quest: Quest) {
     const xp = questXp(quest.tier)
-    completeQuest(quest.id, xp)
+    const gold = dropLoot(quest.tier)
+    completeQuest(quest.id, xp, gold)
     pushToast(`+${xp} XP · ${quest.identifier} done`)
     celebrate()
+  }
+
+  function handleBuy(reward: Reward) {
+    if (buyReward(reward)) {
+      pushToast(`${reward.emoji} ${reward.name} claimed — enjoy!`)
+      celebrate()
+    }
   }
 
   function handleTick(remainingMs: number) {
@@ -148,6 +182,16 @@ export default function QuestsPage() {
           />
         </div>
 
+        <div className={`mt-9 ${tab === "shop" ? "" : "hidden"}`}>
+          <RewardShop
+            store={store}
+            level={levelFromXp(store.xp)}
+            onBuy={handleBuy}
+            onAdd={addReward}
+            onRemove={removeReward}
+          />
+        </div>
+
         <div className={`mt-9 ${tab === "stats" ? "" : "hidden"}`}>
           <StatsPanel store={store} />
         </div>
@@ -168,6 +212,19 @@ export default function QuestsPage() {
           </div>
         ))}
       </div>
+
+      {/* Rare loot moment */}
+      {rareLoot !== null && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center qm-levelup-bg">
+          <div className="qm-levelup qm-panel px-14 py-12 text-center">
+            <p className="text-[3.4rem] leading-none">🎁</p>
+            <p className="font-display text-[1.9rem] font-bold text-qm-gold mt-3">Rare loot!</p>
+            <p className="text-[1rem] text-qm-bright mt-1.5 tabular-nums">
+              🪙 +{rareLoot} gold
+            </p>
+          </div>
+        </div>
+      )}
 
       {/* Level-up moment */}
       {levelUp !== null && (

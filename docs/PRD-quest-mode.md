@@ -32,7 +32,7 @@ difficulty tiers, and pays out XP when they're completed or when focus sessions 
 - No character movement, map, combat, or NPCs. The 2D element is a stationary
   animated sprite + HUD.
 - No multiplayer, leaderboards, or sharing.
-- No streaks, items, loot, or currencies (candidates for v2).
+- No multiplayer economies — gold and rewards are private and self-defined.
 - No more than two difficulty tiers.
 - No writing back to Linear beyond an optional tier label. Linear stays the source of
   truth for tasks; Quest Mode never creates or closes issues.
@@ -91,6 +91,18 @@ without touching logic:
   while a session runs.
 - Level-ups trigger a full-screen-ish moment (flash + fanfare text). This is the
   dopamine hit the whole product exists for; it should feel disproportionate.
+
+### 4.5 Loot & the reward shop
+
+- **Gold** is a second currency: XP is progression (levels, ranks — never spent),
+  gold is spendable loot. Every completed session or quest rolls a drop: sessions
+  scale with length, Side ≈ 15, Main ≈ 60, ±20% jitter. 10% of drops are **rare
+  chests** worth 3× and get a full-screen reveal.
+- **The reward shop turns gold into real-life treats.** Rewards are self-defined
+  (name, emoji, gold price, minimum level) with sensible seeded defaults (fancy
+  coffee 50g … gear upgrade 1,500g at Lv 10+). Buying deducts gold and logs the
+  claim; rewards above your level show locked. The game never verifies the treat —
+  the contract with yourself is the point.
 
 ## 5. UX — one screen
 

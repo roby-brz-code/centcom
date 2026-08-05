@@ -26,11 +26,16 @@ export default function Hud({ store, heroState }: { store: QuestStore; heroState
               {rank} · Lv {level}
             </span>
           </span>
-          <span className="flex items-center gap-1.5 text-[0.85rem] text-orange-400 font-medium">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M12 23c-4.4 0-8-3.4-8-7.7 0-2.6 1.3-4.8 2.7-6.6C8.1 6.9 9.8 5.4 10.5 3c.2-.7 1-1 1.6-.5 1.7 1.3 5.9 5.2 5.9 9.5 0 .6-.1 1.2-.2 1.8.7-.4 1.3-1 1.7-1.7.3-.6 1.2-.7 1.6-.1.6 1 .9 2.2.9 3.3 0 4.3-3.6 7.7-8 7.7z" />
-            </svg>
-            {streak} day streak
+          <span className="flex items-center gap-4">
+            <span className="text-[0.85rem] text-qm-gold font-semibold tabular-nums">
+              🪙 {store.gold.toLocaleString()}
+            </span>
+            <span className="flex items-center gap-1.5 text-[0.85rem] text-orange-400 font-medium">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 23c-4.4 0-8-3.4-8-7.7 0-2.6 1.3-4.8 2.7-6.6C8.1 6.9 9.8 5.4 10.5 3c.2-.7 1-1 1.6-.5 1.7 1.3 5.9 5.2 5.9 9.5 0 .6-.1 1.2-.2 1.8.7-.4 1.3-1 1.7-1.7.3-.6 1.2-.7 1.6-.1.6 1 .9 2.2.9 3.3 0 4.3-3.6 7.7-8 7.7z" />
+              </svg>
+              {streak} day streak
+            </span>
           </span>
         </div>
         <div className="mt-3 h-2 rounded-full bg-white/[0.08] overflow-hidden">
