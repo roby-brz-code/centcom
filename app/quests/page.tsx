@@ -18,10 +18,20 @@ interface Toast {
   text: string
 }
 
+type Tab = "quests" | "focus" | "stats"
+
+const TABS: { id: Tab; label: string }[] = [
+  { id: "quests", label: "⚔️ Quests" },
+  { id: "focus", label: "⏳ Focus" },
+  { id: "stats", label: "📊 Stats" },
+]
+
 export default function QuestsPage() {
   const { store, hydrated, addSessionXp, completeQuest, setTier, reset } = useQuestState()
+  const [tab, setTab] = useState<Tab>("quests")
   const [focusing, setFocusing] = useState(false)
   const [celebrating, setCelebrating] = useState(false)
+  const [clock, setClock] = useState("")
   const [toasts, setToasts] = useState<Toast[]>([])
   const [levelUp, setLevelUp] = useState<number | null>(null)
   const toastId = useRef(0)
@@ -71,6 +81,12 @@ export default function QuestsPage() {
     celebrate()
   }
 
+  function handleTick(remainingMs: number) {
+    const mm = String(Math.floor(remainingMs / 60_000)).padStart(2, "0")
+    const ss = String(Math.floor((remainingMs % 60_000) / 1000)).padStart(2, "0")
+    setClock(`${mm}:${ss}`)
+  }
+
   const heroState: HeroState = celebrating ? "victory" : focusing ? "focusing" : "idle"
 
   return (
@@ -96,29 +112,49 @@ export default function QuestsPage() {
           <Hud store={store} heroState={heroState} />
         </div>
 
-        <div className="mt-10 sm:mt-14">
+        {/* Tabs */}
+        <div className="flex items-center justify-center gap-2.5 mt-7 flex-wrap">
+          {TABS.map((t) => (
+            <button
+              key={t.id}
+              onClick={() => setTab(t.id)}
+              className={`qm-tab ${tab === t.id ? "qm-tab-active" : ""}`}
+            >
+              {t.label}
+              {t.id === "focus" && focusing && (
+                <span className="ml-2 text-qm-teal tabular-nums font-semibold">{clock}</span>
+              )}
+            </button>
+          ))}
+        </div>
+
+        {/* Panels — all stay mounted so a running timer survives tab switches */}
+        <div className={`mt-9 ${tab === "quests" ? "" : "hidden"}`}>
+          <QuestLog
+            quests={quests}
+            completedIds={store.completedQuestIds}
+            onToggleTier={(id: string, tier: Tier) => setTier(id, tier)}
+            onComplete={handleQuestComplete}
+          />
+        </div>
+
+        <div className={`mt-9 ${tab === "focus" ? "" : "hidden"}`}>
           <FocusTimer
             quests={openQuests}
             sessionsToday={sessionsToday}
             onRunningChange={setFocusing}
             onComplete={handleSessionComplete}
+            onTick={handleTick}
           />
         </div>
 
-        <p className="text-[0.72rem] tracking-[0.35em] uppercase text-qm-dim/60 text-center mt-8 mb-12">
-          Quest Mode
-        </p>
-
-        <QuestLog
-          quests={quests}
-          completedIds={store.completedQuestIds}
-          onToggleTier={(id: string, tier: Tier) => setTier(id, tier)}
-          onComplete={handleQuestComplete}
-        />
-
-        <div className="mt-12">
+        <div className={`mt-9 ${tab === "stats" ? "" : "hidden"}`}>
           <StatsPanel store={store} />
         </div>
+
+        <p className="text-[0.7rem] tracking-[0.35em] uppercase text-qm-dim/50 text-center mt-14">
+          Quest Mode · demo — Linear integration lands in M2
+        </p>
       </div>
 
       {/* XP toasts */}
@@ -136,9 +172,9 @@ export default function QuestsPage() {
       {/* Level-up moment */}
       {levelUp !== null && (
         <div className="fixed inset-0 z-50 flex items-center justify-center qm-levelup-bg">
-          <div className="qm-levelup qm-glass rounded-3xl px-14 py-12 text-center">
-            <p className="text-[2.4rem] sm:text-[3rem] font-bold text-qm-gold tracking-tight">
-              Level up!
+          <div className="qm-levelup qm-panel px-14 py-12 text-center">
+            <p className="font-display text-[2.6rem] sm:text-[3.2rem] font-bold text-qm-gold tracking-tight">
+              ✨ Level up!
             </p>
             <p className="text-[1rem] text-qm-bright mt-2">You reached Lv {levelUp}</p>
           </div>

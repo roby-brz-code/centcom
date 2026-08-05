@@ -16,11 +16,11 @@ export default function Hud({ store, heroState }: { store: QuestStore; heroState
   const streak = streakAlive ? store.streakDays : 0
 
   return (
-    <header className="qm-glass rounded-3xl px-6 sm:px-8 py-5 flex items-center gap-6 sm:gap-8">
+    <header className="qm-panel px-6 sm:px-8 py-5 flex items-center gap-6 sm:gap-8">
       <PixelHero state={heroState} size={72} />
       <div className="flex-1 min-w-0">
         <div className="flex items-baseline justify-between gap-3 flex-wrap">
-          <span className="text-[1.05rem] font-semibold text-qm-bright">
+          <span className="font-display text-[1.15rem] font-semibold text-qm-bright">
             Roby
             <span className="ml-2.5 text-[0.72rem] font-semibold tracking-wide uppercase text-qm-gold bg-qm-gold/10 border border-qm-gold/30 rounded-full px-2.5 py-0.5 align-middle">
               {rank} · Lv {level}

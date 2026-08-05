@@ -12,7 +12,7 @@ function StatCard({
   children: React.ReactNode
 }) {
   return (
-    <div className="qm-glass rounded-2xl p-5">
+    <div className="qm-panel p-5">
       <h3 className="text-[0.7rem] tracking-[0.2em] uppercase text-qm-dim mb-4">{title}</h3>
       {children}
     </div>
@@ -85,7 +85,7 @@ export default function StatsPanel({ store }: { store: QuestStore }) {
       </div>
 
       {/* Activity history heatmap */}
-      <div className="qm-glass rounded-2xl p-5 mt-3">
+      <div className="qm-panel p-5 mt-3">
         <div className="flex items-baseline justify-between mb-4">
           <h3 className="text-[0.7rem] tracking-[0.2em] uppercase text-qm-dim">
             Activity History
