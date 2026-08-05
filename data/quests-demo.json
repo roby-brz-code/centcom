@@ -1,0 +1,12 @@
+{
+  "source": "linear-demo",
+  "note": "Demo stand-in for the Linear integration (PRD M2). Replace with live assigned issues.",
+  "quests": [
+    { "id": "q-1", "identifier": "CC-31", "title": "Ship refund flow rework", "tier": "main" },
+    { "id": "q-2", "identifier": "CC-34", "title": "Fix flash report typo", "tier": "side" },
+    { "id": "q-3", "identifier": "CC-36", "title": "Review PR #82 — pagination", "tier": "side" },
+    { "id": "q-4", "identifier": "CC-29", "title": "Q3 close prep checklist", "tier": "main" },
+    { "id": "q-5", "identifier": "CC-40", "title": "Write API error-code docs", "tier": "side" },
+    { "id": "q-6", "identifier": "CC-41", "title": "Triage support backlog", "tier": "side" }
+  ]
+}

@@ -30,6 +30,17 @@
   --font-display: var(--font-display);
   --font-body: var(--font-body);
   --font-mono: var(--font-mono);
+
+  /* Quest Mode palette — deep-night RPG, scoped by qm- utilities */
+  --color-qm-bg: #16132b;
+  --color-qm-card: #221d42;
+  --color-qm-well: #1a1635;
+  --color-qm-line: #3b3370;
+  --color-qm-bright: #eae6ff;
+  --color-qm-dim: #8d86b8;
+  --color-qm-gold: #f0b429;
+  --color-qm-teal: #38c7a2;
+  --color-qm-danger: #e0556c;
 }
 
 body {
@@ -47,4 +58,105 @@ body {
   text-transform: uppercase;
   letter-spacing: 0.12em;
   font-size: 0.6875rem;
+}
+
+/* ── Quest Mode (/quests) ────────────────────────────────────── */
+
+.font-pixel {
+  font-family: var(--font-pixel), var(--font-mono), monospace;
+}
+
+.qm-page {
+  background-color: var(--color-qm-bg);
+  color: var(--color-qm-bright);
+  background-image: radial-gradient(#2a2450 1px, transparent 1px);
+  background-size: 26px 26px;
+}
+
+.qm-card {
+  background-color: var(--color-qm-card);
+  border: 2px solid var(--color-qm-line);
+  box-shadow: 5px 5px 0 rgba(0, 0, 0, 0.35);
+}
+
+.qm-btn {
+  border: 2px solid var(--color-qm-line);
+  color: var(--color-qm-bright);
+  cursor: pointer;
+  transition: transform 80ms ease, box-shadow 80ms ease, border-color 120ms ease;
+}
+.qm-btn:hover {
+  border-color: var(--color-qm-dim);
+  transform: translate(-1px, -1px);
+  box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.35);
+}
+.qm-btn:active {
+  transform: translate(1px, 1px);
+  box-shadow: none;
+}
+.qm-btn-active,
+.qm-btn-primary {
+  border-color: var(--color-qm-teal);
+  color: var(--color-qm-teal);
+}
+.qm-btn-danger:hover {
+  border-color: var(--color-qm-danger);
+  color: var(--color-qm-danger);
+}
+
+.qm-title-glow {
+  text-shadow: 0 0 18px rgba(139, 108, 255, 0.45);
+}
+
+.qm-pulse {
+  animation: qm-pulse 2s ease-in-out infinite;
+}
+@keyframes qm-pulse {
+  50% { opacity: 0.75; }
+}
+
+/* Hero sprite states */
+.qm-hero svg { image-rendering: pixelated; display: block; }
+.qm-hero-idle { animation: qm-bob 2.6s ease-in-out infinite; }
+.qm-hero-focusing {
+  animation: qm-float 3.2s ease-in-out infinite;
+  filter: drop-shadow(0 0 10px rgba(56, 199, 162, 0.8));
+}
+.qm-hero-victory { animation: qm-jump 0.55s ease-in-out infinite; }
+
+@keyframes qm-bob {
+  50% { transform: translateY(2px); }
+}
+@keyframes qm-float {
+  50% { transform: translateY(-4px); }
+}
+@keyframes qm-jump {
+  30% { transform: translateY(-9px) scale(1.05); }
+  60% { transform: translateY(0) scale(0.98); }
+}
+
+/* XP toast */
+.qm-toast {
+  background-color: var(--color-qm-card);
+  border: 2px solid var(--color-qm-gold);
+  box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.4);
+  animation: qm-toast-in 220ms ease-out;
+}
+@keyframes qm-toast-in {
+  from { transform: translateY(14px); opacity: 0; }
+}
+
+/* Level-up moment */
+.qm-levelup-bg {
+  background: rgba(12, 9, 28, 0.82);
+  animation: qm-fade-in 200ms ease-out;
+}
+.qm-levelup {
+  animation: qm-levelup-pop 480ms cubic-bezier(0.2, 1.6, 0.4, 1);
+}
+@keyframes qm-fade-in {
+  from { opacity: 0; }
+}
+@keyframes qm-levelup-pop {
+  from { transform: scale(0.4); opacity: 0; }
 }

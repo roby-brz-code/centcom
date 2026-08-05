@@ -39,7 +39,12 @@ export default function Home() {
           <header className="pt-14 pb-2">
             <div className="flex items-baseline justify-between mb-3">
               <span className="label text-ink-soft">{brief.date}</span>
-              <span className="label text-ink-faint">Email · Slack</span>
+              <span className="label text-ink-faint">
+                Email · Slack ·{" "}
+                <a href="/quests" className="hover:text-ink transition-colors">
+                  ⚔ Quests
+                </a>
+              </span>
             </div>
             <h1
               className="font-display text-ink leading-[0.95] tracking-tight"
