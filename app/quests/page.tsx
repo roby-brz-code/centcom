@@ -3,10 +3,11 @@
 import { useEffect, useRef, useState } from "react"
 import Link from "next/link"
 import demoData from "@/data/quests-demo.json"
-import { Quest, Reward, Tier } from "@/types/quest"
+import { Quest, Tier } from "@/types/quest"
 import { levelFromXp, questXp, sessionXp } from "@/lib/xp"
 import { rollLoot } from "@/lib/loot"
-import RewardShop from "@/app/components/quest/RewardShop"
+import { GearItem, THEMES, themeById } from "@/lib/gear"
+import Armory from "@/app/components/quest/Armory"
 import { useQuestState } from "@/app/hooks/useQuestState"
 import { localDate } from "@/lib/dates"
 import Hud from "@/app/components/quest/Hud"
@@ -25,7 +26,7 @@ type Tab = "quests" | "focus" | "shop" | "stats"
 const TABS: { id: Tab; label: string }[] = [
   { id: "quests", label: "⚔️ Quests" },
   { id: "focus", label: "⏳ Focus" },
-  { id: "shop", label: "🏪 Shop" },
+  { id: "shop", label: "🛡️ Armory" },
   { id: "stats", label: "📊 Stats" },
 ]
 
@@ -35,9 +36,9 @@ export default function QuestsPage() {
     hydrated,
     addSessionXp,
     completeQuest,
-    buyReward,
-    addReward,
-    removeReward,
+    buyGear,
+    toggleEquip,
+    setTheme,
     setTier,
     reset,
   } = useQuestState()
@@ -57,6 +58,7 @@ export default function QuestsPage() {
   }))
   const openQuests = quests.filter((q) => !store.completedQuestIds.includes(q.id))
   const sessionsToday = store.lastSessionDate === localDate() ? store.sessionsToday : 0
+  const heroEquipment = Object.values(store.equippedGear).filter(Boolean) as string[]
 
   // Level-up detection — armed only after localStorage hydration so a
   // returning Lv 5 hero doesn't get a fake fanfare on page load.
@@ -66,6 +68,9 @@ export default function QuestsPage() {
     if (prevLevel.current !== null && lvl > prevLevel.current) {
       setLevelUp(lvl)
       setTimeout(() => setLevelUp(null), 3200)
+      THEMES.filter((t) => t.minLevel > (prevLevel.current ?? 1) && t.minLevel <= lvl).forEach(
+        (t) => pushToast(`🎨 Theme unlocked: ${t.name}`)
+      )
     }
     prevLevel.current = lvl
   }, [store.xp, hydrated])
@@ -108,9 +113,9 @@ export default function QuestsPage() {
     celebrate()
   }
 
-  function handleBuy(reward: Reward) {
-    if (buyReward(reward)) {
-      pushToast(`${reward.emoji} ${reward.name} claimed — enjoy!`)
+  function handleBuyGear(item: GearItem) {
+    if (buyGear(item)) {
+      pushToast(`${item.emoji} ${item.name} acquired!`)
       celebrate()
     }
   }
@@ -124,7 +129,7 @@ export default function QuestsPage() {
   const heroState: HeroState = celebrating ? "victory" : focusing ? "focusing" : "idle"
 
   return (
-    <div className="qm-page min-h-screen">
+    <div className={`qm-page min-h-screen ${themeById(store.theme).className}`}>
       <div className="max-w-[52rem] mx-auto px-4 sm:px-8 pb-16">
         <nav className="flex items-baseline justify-between pt-5 pb-1">
           <Link
@@ -183,12 +188,13 @@ export default function QuestsPage() {
         </div>
 
         <div className={`mt-9 ${tab === "shop" ? "" : "hidden"}`}>
-          <RewardShop
+          <Armory
             store={store}
             level={levelFromXp(store.xp)}
-            onBuy={handleBuy}
-            onAdd={addReward}
-            onRemove={removeReward}
+            heroEquipment={heroEquipment}
+            onBuy={handleBuyGear}
+            onToggleEquip={toggleEquip}
+            onSetTheme={setTheme}
           />
         </div>
 

@@ -9,24 +9,6 @@ export interface Quest {
   url?: string
 }
 
-export interface Reward {
-  id: string
-  emoji: string
-  name: string
-  /** Price in gold */
-  cost: number
-  /** Level required before this can be bought */
-  minLevel: number
-}
-
-export interface Purchase {
-  name: string
-  emoji: string
-  cost: number
-  /** Local date (YYYY-MM-DD) */
-  date: string
-}
-
 export interface DayEntry {
   sessions: number
   minutes: number
@@ -53,6 +35,10 @@ export interface QuestStore {
   /** Spendable loot currency (XP is progression and is never spent) */
   gold: number
   goldEarned: number
-  rewards: Reward[]
-  purchases: Purchase[]
+  /** Gear item ids owned (permanent) */
+  ownedGear: string[]
+  /** Equipped item id per gear slot */
+  equippedGear: Record<string, string | null>
+  /** Active theme id — themes unlock by level */
+  theme: string
 }

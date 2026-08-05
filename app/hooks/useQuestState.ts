@@ -1,9 +1,9 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { Tier, QuestStore, DayEntry, Reward } from "@/types/quest"
+import { Tier, QuestStore, DayEntry } from "@/types/quest"
 import { localDate, yesterdayDate } from "@/lib/dates"
-import { DEFAULT_REWARDS } from "@/lib/loot"
+import { GearItem } from "@/lib/gear"
 
 const KEY = "quest-state-v1"
 
@@ -20,8 +20,9 @@ const EMPTY: QuestStore = {
   dayLog: {},
   gold: 0,
   goldEarned: 0,
-  rewards: DEFAULT_REWARDS,
-  purchases: [],
+  ownedGear: [],
+  equippedGear: {},
+  theme: "midnight",
 }
 
 const EMPTY_DAY: DayEntry = { sessions: 0, minutes: 0, xp: 0, quests: 0 }
@@ -92,21 +93,26 @@ export function useQuestState() {
         },
       })
     },
-    buyReward: (reward: Reward): boolean => {
-      if (store.gold < reward.cost) return false
+    buyGear: (item: GearItem): boolean => {
+      if (store.gold < item.price || store.ownedGear.includes(item.id)) return false
       persist({
         ...store,
-        gold: store.gold - reward.cost,
-        purchases: [
-          { name: reward.name, emoji: reward.emoji, cost: reward.cost, date: localDate() },
-          ...store.purchases,
-        ],
+        gold: store.gold - item.price,
+        ownedGear: [...store.ownedGear, item.id],
+        // Fresh loot goes straight on
+        equippedGear: { ...store.equippedGear, [item.slot]: item.id },
       })
       return true
     },
-    addReward: (reward: Reward) => persist({ ...store, rewards: [...store.rewards, reward] }),
-    removeReward: (id: string) =>
-      persist({ ...store, rewards: store.rewards.filter((r) => r.id !== id) }),
+    toggleEquip: (item: GearItem) =>
+      persist({
+        ...store,
+        equippedGear: {
+          ...store.equippedGear,
+          [item.slot]: store.equippedGear[item.slot] === item.id ? null : item.id,
+        },
+      }),
+    setTheme: (theme: string) => persist({ ...store, theme }),
     setTier: (id: string, tier: Tier) =>
       persist({ ...store, tierOverrides: { ...store.tierOverrides, [id]: tier } }),
     reset: () => persist(EMPTY),

@@ -3,9 +3,11 @@
 import { levelProgress, rankForLevel, nextRank } from "@/lib/xp"
 import { QuestStore } from "@/types/quest"
 import { localDate, yesterdayDate } from "@/lib/dates"
-import PixelHero, { HeroState } from "./PixelHero"
+import PixelHero, { HeroState, PetSprite } from "./PixelHero"
 
 export default function Hud({ store, heroState }: { store: QuestStore; heroState: HeroState }) {
+  const equipment = Object.values(store.equippedGear).filter(Boolean) as string[]
+  const pet = store.equippedGear["pet"]
   const { level, into, toNext } = levelProgress(store.xp)
   const pct = Math.min(100, (into / toNext) * 100)
   const rank = rankForLevel(level)
@@ -17,7 +19,10 @@ export default function Hud({ store, heroState }: { store: QuestStore; heroState
 
   return (
     <header className="qm-panel px-6 sm:px-8 py-5 flex items-center gap-6 sm:gap-8">
-      <PixelHero state={heroState} size={72} />
+      <div className="flex items-end gap-1.5">
+        <PixelHero state={heroState} size={72} equipment={equipment} />
+        {pet && <PetSprite itemId={pet} size={28} />}
+      </div>
       <div className="flex-1 min-w-0">
         <div className="flex items-baseline justify-between gap-3 flex-wrap">
           <span className="font-display text-[1.15rem] font-semibold text-qm-bright">

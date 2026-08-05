@@ -98,11 +98,14 @@ without touching logic:
   gold is spendable loot. Every completed session or quest rolls a drop: sessions
   scale with length, Side ≈ 15, Main ≈ 60, ±20% jitter. 10% of drops are **rare
   chests** worth 3× and get a full-screen reveal.
-- **The reward shop turns gold into real-life treats.** Rewards are self-defined
-  (name, emoji, gold price, minimum level) with sensible seeded defaults (fancy
-  coffee 50g … gear upgrade 1,500g at Lv 10+). Buying deducts gold and logs the
-  claim; rewards above your level show locked. The game never verifies the treat —
-  the contract with yourself is the point.
+- **The Armory turns gold into gear the hero visibly wears.** Cosmetic items render
+  as pixel layers on the sprite (sword 150g, shield 250g, wizard hat 300g, cape
+  400g, pet slime 600g, crown 900g, halo 1,500g). One item per slot (head / hand /
+  offhand / back / pet); owning is permanent, equipping is free, and fresh loot
+  auto-equips. Loot must be visible on the character — invisible loot isn't loot.
+- **Themes are level milestones, never bought.** Alternate table skins (Deep Forest
+  Lv 3, Dawn Lv 5, Ember Lv 8, Aurora Lv 12) unlock automatically as ranks climb,
+  so levelling has a payoff beyond the badge while gold stays a pure gear economy.
 
 ## 5. UX — one screen
 
